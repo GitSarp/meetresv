@@ -12,4 +12,17 @@ CREATE TABLE `MeetResv`.`mr_user`  (
   PRIMARY KEY (`id`)
 );
 
+CREATE TABLE `MeetResv`.`mr_meetingroom` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `room_no` VARCHAR(45) NOT NULL,
+  `mr_ext` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE `MeetResv`.`mr_order` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `mr_room_no` VARCHAR(45) NOT NULL,
+  `mr_user` VARCHAR(45) NOT NULL,
+  `mr_interval` VARCHAR(255) NOT NULL,
+  `mr_purpose` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
 

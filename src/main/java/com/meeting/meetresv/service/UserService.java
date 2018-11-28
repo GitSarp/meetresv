@@ -8,19 +8,13 @@ import java.util.List;
 
 public interface UserService {
 
-    long countByExample(MrUserExample example);
-
-    int deleteByExample(MrUserExample example);
-
-    int deleteByPrimaryKey(Integer id);
-
     int insert(MrUser record);
 
     int insertSelective(MrUser record);
 
-    List<MrUser> selectByExample(MrUserExample example);
+    int deleteByExample(MrUserExample example);
 
-    MrUser selectByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") MrUser record, @Param("example") MrUserExample example);
 
@@ -29,4 +23,8 @@ public interface UserService {
     int updateByPrimaryKeySelective(MrUser record);
 
     int updateByPrimaryKey(MrUser record);
+
+    List<MrUser> selectByExample(MrUserExample example);
+
+    MrUser selectByPrimaryKey(Integer id);
 }
