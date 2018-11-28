@@ -1,5 +1,6 @@
 package com.meeting.meetresv.mapper;
 
+import com.meeting.meetresv.pojo.MrOrder;
 import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
 import java.util.List;

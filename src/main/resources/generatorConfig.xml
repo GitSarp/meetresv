@@ -11,7 +11,7 @@
 		</commentGenerator>
 		<!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://192.168.117.92:3306/MeetResv" userId="root"
+			connectionURL="jdbc:mysql://172.20.17.104:3306/MeetResv" userId="root"
 			password="1234">
 		</jdbcConnection>
 		<!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和 
@@ -29,8 +29,8 @@
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
         <!-- targetProject:mapper映射文件生成的位置 -->
-		<sqlMapGenerator targetPackage="com.meeting.meetresv.mapper"
-			targetProject="src/main/java">
+		<sqlMapGenerator targetPackage="mapper"
+			targetProject="src/main/resources">
 			<!-- enableSubPackages:是否让schema作为包的后缀 -->
 			<property name="enableSubPackages" value="false" />
 		</sqlMapGenerator>
@@ -43,5 +43,6 @@
 		</javaClientGenerator>
 		<!-- 指定数据库表 -->
 		<table schema="" tableName="mr_user"></table>
+		<table schema="" tableName="mr_order"></table>
 	</context>
 </generatorConfiguration>

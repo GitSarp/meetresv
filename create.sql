@@ -9,7 +9,8 @@ CREATE TABLE `MeetResv`.`mr_user`  (
   `department` varchar(255) NULL,
   `phone` varchar(255) NULL,
   `role` tinyint(1) NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE (name)
 );
 
 CREATE TABLE `MeetResv`.`mr_meetingroom` (
@@ -20,9 +21,9 @@ CREATE TABLE `MeetResv`.`mr_meetingroom` (
 
 CREATE TABLE `MeetResv`.`mr_order` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `mr_room_no` VARCHAR(45) NOT NULL,
-  `mr_user` VARCHAR(45) NOT NULL,
-  `mr_interval` VARCHAR(255) NOT NULL,
-  `mr_purpose` VARCHAR(45) NULL,
+  `room_no` VARCHAR(45) NOT NULL,
+  `user` VARCHAR(45) NOT NULL,
+  `period` VARCHAR(255) NOT NULL,
+  `purpose` VARCHAR(45) NULL,
   PRIMARY KEY (`id`));
 

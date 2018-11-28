@@ -1,5 +1,8 @@
 package com.meeting.meetresv.pojo;
 
+import lombok.ToString;
+
+@ToString
 public class MrUser {
     private Integer id;
 

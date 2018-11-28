@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.meeting.meetresv.mapper.MrOrderMapper">
+  <resultMap id="BaseResultMap" type="com.meeting.meetresv.pojo.MrOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="room_no" jdbcType="VARCHAR" property="roomNo" />
+    <result column="user" jdbcType="VARCHAR" property="user" />
+    <result column="period" jdbcType="VARCHAR" property="period" />
+    <result column="purpose" jdbcType="VARCHAR" property="purpose" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, room_no, user, period, purpose
+  </sql>
+  <select id="selectByExample" parameterType="com.meeting.meetresv.pojo.MrOrderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mr_order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mr_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mr_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.meeting.meetresv.pojo.MrOrderExample">
+    delete from mr_order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.meeting.meetresv.pojo.MrOrder">
+    insert into mr_order (id, room_no, user, 
+      period, purpose)
+    values (#{id,jdbcType=INTEGER}, #{roomNo,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR}, 
+      #{period,jdbcType=VARCHAR}, #{purpose,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.meeting.meetresv.pojo.MrOrder">
+    insert into mr_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="roomNo != null">
+        room_no,
+      </if>
+      <if test="user != null">
+        user,
+      </if>
+      <if test="period != null">
+        period,
+      </if>
+      <if test="purpose != null">
+        purpose,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roomNo != null">
+        #{roomNo,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null">
+        #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="period != null">
+        #{period,jdbcType=VARCHAR},
+      </if>
+      <if test="purpose != null">
+        #{purpose,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.meeting.meetresv.pojo.MrOrderExample" resultType="java.lang.Long">
+    select count(*) from mr_order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update mr_order
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.roomNo != null">
+        room_no = #{record.roomNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.user != null">
+        user = #{record.user,jdbcType=VARCHAR},
+      </if>
+      <if test="record.period != null">
+        period = #{record.period,jdbcType=VARCHAR},
+      </if>
+      <if test="record.purpose != null">
+        purpose = #{record.purpose,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update mr_order
+    set id = #{record.id,jdbcType=INTEGER},
+      room_no = #{record.roomNo,jdbcType=VARCHAR},
+      user = #{record.user,jdbcType=VARCHAR},
+      period = #{record.period,jdbcType=VARCHAR},
+      purpose = #{record.purpose,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.meeting.meetresv.pojo.MrOrder">
+    update mr_order
+    <set>
+      <if test="roomNo != null">
+        room_no = #{roomNo,jdbcType=VARCHAR},
+      </if>
+      <if test="user != null">
+        user = #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="period != null">
+        period = #{period,jdbcType=VARCHAR},
+      </if>
+      <if test="purpose != null">
+        purpose = #{purpose,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.meeting.meetresv.pojo.MrOrder">
+    update mr_order
+    set room_no = #{roomNo,jdbcType=VARCHAR},
+      user = #{user,jdbcType=VARCHAR},
+      period = #{period,jdbcType=VARCHAR},
+      purpose = #{purpose,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectPrimitive" parameterType="com.meeting.meetresv.pojo.MrOrder" resultMap="BaseResultMap">
+    select * from mr_order
+    <include refid="searchBy"/>
+  </select>
+
+  <!-- 基本的sql查询条件公共引用 -->
+  <sql id="searchBy">
+    <trim prefix="where" prefixOverrides="and|or">
+      <if test="user !=null and user !=''">
+        user  = #{user,jdbcType=VARCHAR}
+      </if>
+      <if test="roomNo !=null and roomNo !=''">
+        and room_no = #{roomNo,jdbcType=VARCHAR}
+      </if>
+      <if test="purpose !=null and purpose !=''">
+        and purpose = #{purpose,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </sql>
+</mapper>
