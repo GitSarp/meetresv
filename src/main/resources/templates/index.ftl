@@ -215,13 +215,13 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="nav1.html" target="mainFrame">修改密码</a>
+                        <a href="/admin/modifyPD" target="mainFrame">修改密码</a>
                     </li>
                     <li>
-                        <a href="nav2.html" target="mainFrame">退出系统</a>
+                        <a href="/admin/logout" target="mainFrame">退出系统</a>
                     </li>
                     <li>
-                        <a href="nav3.html" target="mainFrame">查看个人信息</a>
+                        <a href="#" target="mainFrame">查看个人信息</a>
                     </li>
                 </ul>
             </li>

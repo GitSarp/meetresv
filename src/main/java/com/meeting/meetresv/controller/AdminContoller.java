@@ -63,7 +63,7 @@ public class AdminContoller extends UserCommonController {
     }
 
     @ApiOperation(value="用户注销", notes="用户注销")
-    @GetMapping("/admin/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request,Model model){
         if(!checkAdminLogin(request)){
             model.addAttribute("msg","您尚未登录！");
@@ -74,17 +74,26 @@ public class AdminContoller extends UserCommonController {
         return "login";
     }
 
+    @GetMapping("/modifyPD")
+    public String modify(){
+        return "modifyPD";
+    }
+
     @ApiOperation(value="用户改密", notes="用户改密")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "newPasswd", value = "新密码", required = true, dataType = "String")
     })
-    @PostMapping("/admin/modifyPD")
-    public String modifyPassword(HttpServletRequest request,String newPasswd,Model model){
+    @PostMapping("/modifyPD")
+    public String modifyPassword(HttpServletRequest request,String newPasswd,String oldPasswd,Model model){
         if(!checkAdminLogin(request)){
             model.addAttribute("msg","您尚未登录！");
             return "login";
         }
         MrUser user=(MrUser)request.getSession().getAttribute("admin");
+        if(!EncryptUtil.md5Password(oldPasswd).equals(user.getPassword())){
+            model.addAttribute("msg","旧密码错误！");
+            return "modifyPD";
+        }
         user.setPassword(newPasswd);
         EncryptUtil.encrypt(user);
         if(userService.updateByPrimaryKey(user)==1){
@@ -136,7 +145,7 @@ public class AdminContoller extends UserCommonController {
     public String upload(@RequestParam("file") MultipartFile file, Model model, HttpServletRequest request) {
         if(!checkAdminLogin(request)){
             model.addAttribute("msg","请先登录！");
-            return "userManage";
+            return "login";
         }
         if (!file.isEmpty()) {
             String fileName=file.getOriginalFilename();//原始文件名
