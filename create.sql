@@ -23,6 +23,7 @@ CREATE TABLE `MeetResv`.`mr_order` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `room_no` VARCHAR(45) NOT NULL,
   `user` VARCHAR(45) NOT NULL,
+  `day` varchar(10) NOT NULL,
   `period` VARCHAR(255) NOT NULL,
   `purpose` VARCHAR(45) NULL,
   PRIMARY KEY (`id`));

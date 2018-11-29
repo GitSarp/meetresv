@@ -101,10 +101,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.meeting.meetresv.pojo.MrUser">
-    insert into mr_user (id, name, password, 
+    insert into mr_user (name, password,
       department, phone, role
       )
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+    values (#{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{department,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=BIT}
       )
   </insert>

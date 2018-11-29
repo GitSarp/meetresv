@@ -5,6 +5,8 @@ import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
 import com.meeting.meetresv.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +17,7 @@ public class UserServiceImpl implements UserService {
     MrUserMapper mrUserMapper;
 
     @Override
-    public int insert(MrUser record) {
+    public int insert(MrUser record) throws DuplicateKeyException {
         return mrUserMapper.insert(record);
     }
 

@@ -8,6 +8,10 @@ public class BaseController {
             return request.getSession().getAttribute("user")!=null?true:false;
     }
 
+    Boolean checkAdminLogin(HttpServletRequest request){
+        return request.getSession().getAttribute("admin")!=null?true:false;
+    }
+
     protected String doResult(int code){
         return code==1 ? "success":"error";
     }

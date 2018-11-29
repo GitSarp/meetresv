@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="room_no" jdbcType="VARCHAR" property="roomNo" />
     <result column="user" jdbcType="VARCHAR" property="user" />
+    <result column="day" jdbcType="VARCHAR" property="day" />
     <result column="period" jdbcType="VARCHAR" property="period" />
     <result column="purpose" jdbcType="VARCHAR" property="purpose" />
   </resultMap>
@@ -67,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, room_no, user, period, purpose
+    id, room_no, user, day, period, purpose
   </sql>
   <select id="selectByExample" parameterType="com.meeting.meetresv.pojo.MrOrderExample" resultMap="BaseResultMap">
     select
@@ -100,10 +101,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.meeting.meetresv.pojo.MrOrder">
-    insert into mr_order (id, room_no, user, 
-      period, purpose)
-    values (#{id,jdbcType=INTEGER}, #{roomNo,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR}, 
-      #{period,jdbcType=VARCHAR}, #{purpose,jdbcType=VARCHAR})
+    insert into mr_order (room_no, user,
+      day, period, purpose
+      )
+    values (#{roomNo,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR},
+      #{day,jdbcType=VARCHAR}, #{period,jdbcType=VARCHAR}, #{purpose,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.meeting.meetresv.pojo.MrOrder">
     insert into mr_order
@@ -116,6 +119,9 @@
       </if>
       <if test="user != null">
         user,
+      </if>
+      <if test="day != null">
+        day,
       </if>
       <if test="period != null">
         period,
@@ -133,6 +139,9 @@
       </if>
       <if test="user != null">
         #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="day != null">
+        #{day,jdbcType=VARCHAR},
       </if>
       <if test="period != null">
         #{period,jdbcType=VARCHAR},
@@ -160,6 +169,9 @@
       <if test="record.user != null">
         user = #{record.user,jdbcType=VARCHAR},
       </if>
+      <if test="record.day != null">
+        day = #{record.day,jdbcType=VARCHAR},
+      </if>
       <if test="record.period != null">
         period = #{record.period,jdbcType=VARCHAR},
       </if>
@@ -176,6 +188,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       room_no = #{record.roomNo,jdbcType=VARCHAR},
       user = #{record.user,jdbcType=VARCHAR},
+      day = #{record.day,jdbcType=VARCHAR},
       period = #{record.period,jdbcType=VARCHAR},
       purpose = #{record.purpose,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -191,6 +204,9 @@
       <if test="user != null">
         user = #{user,jdbcType=VARCHAR},
       </if>
+      <if test="day != null">
+        day = #{day,jdbcType=VARCHAR},
+      </if>
       <if test="period != null">
         period = #{period,jdbcType=VARCHAR},
       </if>
@@ -204,6 +220,7 @@
     update mr_order
     set room_no = #{roomNo,jdbcType=VARCHAR},
       user = #{user,jdbcType=VARCHAR},
+      day = #{day,jdbcType=VARCHAR},
       period = #{period,jdbcType=VARCHAR},
       purpose = #{purpose,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
@@ -211,7 +228,7 @@
 
   <select id="selectPrimitive" parameterType="com.meeting.meetresv.pojo.MrOrder" resultMap="BaseResultMap">
     select * from mr_order
-    <include refid="searchBy"/>
+    <include refid="searchBy" />
   </select>
 
   <!-- 基本的sql查询条件公共引用 -->
@@ -222,6 +239,9 @@
       </if>
       <if test="roomNo !=null and roomNo !=''">
         and room_no = #{roomNo,jdbcType=VARCHAR}
+      </if>
+      <if test="day !=null and day !=''">
+        and day = #{day,jdbcType=VARCHAR}
       </if>
       <if test="purpose !=null and purpose !=''">
         and purpose = #{purpose,jdbcType=VARCHAR}

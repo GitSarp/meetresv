@@ -1,12 +1,12 @@
 package com.meeting.meetresv.mapper;
 
-import com.meeting.meetresv.pojo.MrOrder;
 import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.dao.DuplicateKeyException;
 
 @Mapper
 public interface MrUserMapper {
@@ -16,7 +16,7 @@ public interface MrUserMapper {
 
     int deleteByPrimaryKey(Integer id);
 
-    int insert(MrUser record);
+    int insert(MrUser record) throws DuplicateKeyException;
 
     int insertSelective(MrUser record);
 

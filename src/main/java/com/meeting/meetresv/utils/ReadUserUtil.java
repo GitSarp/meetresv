@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ReadUserUtil {
-
-    @Autowired
-    static UserService userService;
 
     private static final Logger logger = Logger.getLogger(ReadUserUtil.class);
 
@@ -32,7 +30,7 @@ public class ReadUserUtil {
     }
 
     //读取excel
-    private static Workbook getReadWorkBookType(String filePath)throws IOException{// throws BusinessException {
+    private static Workbook getReadWorkBookType(String filePath)throws IOException{
         //xls-2003, xlsx-2007
         FileInputStream is = null;
 
@@ -69,7 +67,7 @@ public class ReadUserUtil {
         }
     }
 
-    public static void readExcel(String sourceFilePath)throws IOException{// throws BusinessException {
+    public static void readExcel(String sourceFilePath,UserService userService)throws IOException{// throws BusinessException {
         Workbook workbook = null;
         try {
             workbook = getReadWorkBookType(sourceFilePath);
@@ -101,24 +99,19 @@ public class ReadUserUtil {
                 if(rowNum!=0){
                     userModel.setPassword(userModel.getPhone());//密码初始化为手机号或固定值
                     EncryptUtil.encrypt(userModel);
-                    if(userService.insert(userModel)!=1){
+                    try{
+                        userService.insert(userModel);
+                    }catch (DuplicateKeyException e){
+//                        e.printStackTrace();
                         userModel.setPassword("");//避免打印加密后的密码
                         logger.error("导入错误："+userModel.toString());
+                        continue;
                     }
                 }
             }
         } finally {
             workbook.close();
             //IOUtils.closeQuietly(workbook);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            readExcel("C:\\Users\\Administrator\\Desktop\\test_user.xlsx");
-        } catch (IOException e) {
-            System.out.println("读取excel错误");
-            e.printStackTrace();
         }
     }
 

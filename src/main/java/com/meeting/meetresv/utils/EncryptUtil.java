@@ -40,8 +40,12 @@ public class EncryptUtil {
 
     public static void encrypt(MrUser user){
         String password=user.getPassword();
-        if(password!=null|| password!=""){
+        if(!StringUtil.isEmpty(password)){
             user.setPassword(md5Password(password));
         }
     }
+
+//    public static void main(String[] args) {
+//        System.out.println(md5Password("f4013c22c568e249833efe8914ccf37d"));
+//    }
 }

@@ -7,6 +7,8 @@ public class MrOrder {
 
     private String user;
 
+    private String day;
+
     private String period;
 
     private String purpose;
@@ -33,6 +35,14 @@ public class MrOrder {
 
     public void setUser(String user) {
         this.user = user == null ? null : user.trim();
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day == null ? null : day.trim();
     }
 
     public String getPeriod() {
