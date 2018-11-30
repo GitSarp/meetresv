@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 @Api(value = "OrderController",description = "预约相关api")
 @RestController
+@RequestMapping("/order")
 public class OrderController extends BaseController{
 
     @Autowired
@@ -32,8 +34,7 @@ public class OrderController extends BaseController{
             @ApiImplicitParam(name = "period", value = "占用时段", required = true, dataType = "String"),
             @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")
     })
-
-    @PostMapping("/order")
+    @PostMapping("/add")
     public CusResult orderRoom(HttpServletRequest request,MrOrder order){
         if(!checkLogin(request)){
             return new CusResult("error","请先登录！");
@@ -41,7 +42,13 @@ public class OrderController extends BaseController{
         if(StringUtil.isEmpty(order.getDay())){
             order.setDay(DateUtil.getWeek(new Date()));
         }
-        order.setUser(((MrUser)request.getSession().getAttribute("user")).getName());
+        if(order.getUser()==null){
+            if(request.getSession().getAttribute("user")==null){
+                order.setUser(((MrUser)request.getSession().getAttribute("admin")).getName());
+            }else{
+                order.setUser(((MrUser)request.getSession().getAttribute("user")).getName());
+            }
+        }
         return new CusResult(doResult(orderService.orderRoom(order)),"");
     }
 
@@ -51,18 +58,31 @@ public class OrderController extends BaseController{
             @ApiImplicitParam(name = "user", value = "预约者姓名", dataType = "String"),
             @ApiImplicitParam(name = "day", value = "工作日", dataType = "String"),
             @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")})
-    @PostMapping("/orderQuery")
+    @RequestMapping(value = "/query",method = {RequestMethod.POST, RequestMethod.GET})
     public List<MrOrder> query(MrOrder order){
         return orderService.query(order);
     }
 
     @ApiOperation(value="取消预约", notes="取消预约信息")
     @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "预约id", required = true, dataType = "Integer")})
-    @PostMapping("/cancel")
+    @PostMapping("/del")
     public CusResult cancelOrder(HttpServletRequest request, Integer id){
         if(!checkLogin(request)){
             return new CusResult("error","请先登录！");
         }
         return new CusResult(doResult(orderService.cancelOrder(id)),"");
+    }
+
+    @ApiOperation(value="更新预约信息", notes="更新预约信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomNo", value = "会议室编号", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "day", value = "工作日，不传默认今天", dataType = "String"),
+            @ApiImplicitParam(name = "user", value = "预约人", dataType = "String"),
+            @ApiImplicitParam(name = "period", value = "占用时段", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")
+    })
+    @PostMapping("/update")
+    CusResult updateRoom(MrOrder order){
+        return new CusResult(doResult(orderService.updateOrder(order)),"");
     }
 }

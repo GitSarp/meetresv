@@ -10,4 +10,5 @@ public interface OrderService {
     int orderRoom(MrOrder order);
     List<MrOrder> query(MrOrder order);
     int cancelOrder(Integer id);
+    int updateOrder(MrOrder order);
 }

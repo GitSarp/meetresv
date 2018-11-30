@@ -1,6 +1,7 @@
 package com.meeting.meetresv.controller;
 
 import com.meeting.meetresv.common.CusResult;
+import com.meeting.meetresv.pojo.MrMeetingroom;
 import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
 import com.meeting.meetresv.service.UserService;
@@ -15,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +26,10 @@ import java.util.List;
 @Api(value = "AdminContoller",description = "管理员相关api")
 @Controller
 @RequestMapping("/admin")
-public class AdminContoller extends UserCommonController {
+public class AdminContoller extends BaseController {
+
+    @Autowired
+    UserService userService;
 
     private static final Logger logger= Logger.getLogger(UserController.class);
 
@@ -97,12 +98,12 @@ public class AdminContoller extends UserCommonController {
         user.setPassword(newPasswd);
         EncryptUtil.encrypt(user);
         if(userService.updateByPrimaryKey(user)==1){
-            request.getSession().setAttribute("admin",user);
-            model.addAttribute("msg","您的密码修改成功！");
-            return "index";
+            request.getSession().removeAttribute("admin");
+            model.addAttribute("msg","您的密码修改成功,请重新登录！");
+            return "modifyPD";
         }
         model.addAttribute("msg","密码修改失败！");
-        return "index";
+        return "modifyPD";
     }
 
 
@@ -114,34 +115,17 @@ public class AdminContoller extends UserCommonController {
     public String roomManage(){
         return "roomManage";
     }
-
-    CusResult add(MrUser user, Model model){
-        try{
-            return new CusResult(doResult(userService.insert(user)),"");
-        }catch (DuplicateKeyException e){
-            e.printStackTrace();
-            return new CusResult("error","新增用户失败：用户姓名重复");
-        }
+    @GetMapping("/orders")
+    String orderManage(){
+        return "orderManage";
     }
-
-    String delete(Integer id,Model model){
-        int result= userService.deleteByPrimaryKey(id);
-        if(result==0){
-            model.addAttribute("result","ok");
-        }else {
-            model.addAttribute("result","failed");
-        }
-        return "success";
-    }
-
-
-    CusResult update(MrUser user,Model model){
-        EncryptUtil.encrypt(user);
-        return new CusResult(doResult(userService.updateByPrimaryKey(user)),"");
+    @GetMapping("/batch")
+    public String batchDo(){
+        return "batch";
     }
 
     //批量导入excel用户
-    @PostMapping("/upload")
+    @PostMapping("/uploadUser")
     public String upload(@RequestParam("file") MultipartFile file, Model model, HttpServletRequest request) {
         if(!checkAdminLogin(request)){
             model.addAttribute("msg","请先登录！");
@@ -152,7 +136,7 @@ public class AdminContoller extends UserCommonController {
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
             if (!suffixName.toLowerCase().endsWith("xlsx")&&!suffixName.toLowerCase().endsWith("xls")) {
                 model.addAttribute("msg","请选择有效的excel文件！");
-                return "userManage";
+                return "batch";
             }
             String destName="user"+suffixName;//转换文件名
             File dest=new File(destName);
@@ -165,10 +149,12 @@ public class AdminContoller extends UserCommonController {
                 out.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                return "上传失败," + e.getMessage();
+                model.addAttribute("msg","文件上传失败！"+e.getMessage());
+                return "batch";
             } catch (IOException e) {
                 e.printStackTrace();
-                return "上传失败," + e.getMessage();
+                model.addAttribute("msg","文件上传失败！"+e.getMessage());
+                return "batch";
             }
 
             try {
@@ -177,16 +163,50 @@ public class AdminContoller extends UserCommonController {
                     logger.info("删除用户excel失败...");
                 }
                 model.addAttribute("msg","批量导入用户成功！");
-                return "userManage";
+                return "batch";
             } catch (IOException e) {
                 e.printStackTrace();
                 logger.error("批量导入用户失败...");
-                return "上传失败," + e.getMessage();
+                model.addAttribute("msg","批量导入用户失败！"+e.getMessage());
+                return "batch";
             }
-
         } else {
             model.addAttribute("msg","上传失败，因为文件是空的！");
-            return "userManage";
+            return "batch";
         }
+    }
+
+
+    List<MrUser> select(MrUserExample userExample){
+        List<MrUser> userList= userService.selectByExample(userExample);
+        return userList;
+    }
+
+    @PostMapping("/add")
+    @ResponseBody CusResult add(MrUser user, Model model){
+        try{
+            EncryptUtil.encrypt(user);
+            return new CusResult(doResult(userService.insert(user)),"");
+        }catch (DuplicateKeyException e){
+            e.printStackTrace();
+            return new CusResult("error","用户名重复");
+        }
+    }
+
+    @DeleteMapping("/del")
+    @ResponseBody  CusResult delete(Integer id,Model model){
+        return new CusResult(doResult(userService.deleteByPrimaryKey(id)),"");
+    }
+
+
+    @PostMapping("/update")
+    @ResponseBody CusResult update(MrUser user,Model model){
+        EncryptUtil.encrypt(user);
+        return new CusResult(doResult(userService.updateByPrimaryKey(user)),"");
+    }
+
+    @GetMapping("/getUsers")
+    @ResponseBody List<MrUser> getUsers(){
+        return select(new MrUserExample());
     }
 }

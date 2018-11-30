@@ -18,4 +18,19 @@ public class RoomServiceImpl implements RoomService {
     public List<MrMeetingroom> getAllRoom(){
         return mrMeetingroomMapper.selectByExample(new MrMeetingroomExample());
     }
+
+    @Override
+    public int addRoom(MrMeetingroom record) {
+        return mrMeetingroomMapper.insert(record);
+    }
+
+    @Override
+    public int updateRoom(MrMeetingroom record) {
+        return mrMeetingroomMapper.updateByPrimaryKey(record);
+    }
+
+    @Override
+    public int delRoom(Integer id) {
+        return mrMeetingroomMapper.deleteByPrimaryKey(id);
+    }
 }

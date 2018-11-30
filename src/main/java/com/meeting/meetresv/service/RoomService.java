@@ -6,5 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 public interface RoomService {
-    public List<MrMeetingroom> getAllRoom();
+    List<MrMeetingroom> getAllRoom();
+    int addRoom(MrMeetingroom record);
+    int updateRoom(MrMeetingroom record);
+    int delRoom(Integer id);
 }

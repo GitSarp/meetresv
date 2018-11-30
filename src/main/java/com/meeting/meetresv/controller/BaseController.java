@@ -5,7 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public class BaseController {
     Boolean checkLogin(HttpServletRequest request){
-            return request.getSession().getAttribute("user")!=null?true:false;
+            //一些公共接口admin也会调用
+            if((request.getSession().getAttribute("user")==null)&&(request.getSession().getAttribute("admin")==null)){
+                return false;
+            }
+            return true;
     }
 
     Boolean checkAdminLogin(HttpServletRequest request){

@@ -24,7 +24,10 @@ import org.apache.log4j.Logger;
 
 @Api(value = "UserController",description = "用户相关api")
 @RestController
-public class UserController extends UserCommonController {
+public class UserController extends BaseController {
+
+    @Autowired
+    UserService userService;
 
     private static final Logger logger= Logger.getLogger(UserController.class);
 
@@ -79,4 +82,8 @@ public class UserController extends UserCommonController {
         return new CusResult("error","密码修改失败");
     }
 
+    List<MrUser> select(MrUserExample userExample){
+        List<MrUser> userList= userService.selectByExample(userExample);
+        return userList;
+    }
 }

@@ -30,4 +30,9 @@ public class OrderServiceImpl implements OrderService {
     public int cancelOrder(Integer id) {
         return mrOrderMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public int updateOrder(MrOrder order) {
+        return mrOrderMapper.updateByPrimaryKey(order);
+    }
 }
