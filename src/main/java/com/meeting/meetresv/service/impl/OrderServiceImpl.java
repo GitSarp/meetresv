@@ -4,7 +4,9 @@ import com.meeting.meetresv.mapper.MrOrderMapper;
 import com.meeting.meetresv.pojo.MrOrder;
 import com.meeting.meetresv.pojo.MrOrderExample;
 import com.meeting.meetresv.pojo.MrUser;
+import com.meeting.meetresv.pojo.page.OrderPage;
 import com.meeting.meetresv.service.OrderService;
+import com.meeting.meetresv.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<MrOrder> query(MrOrder order) {
+    public List<MrOrder> query(OrderPage order) {
         return mrOrderMapper.selectPrimitive(order);
+    }
+
+    @Override
+    public long count(MrOrder order) {
+        MrOrderExample example=new MrOrderExample();
+        MrOrderExample.Criteria criteria=null;
+        if(!StringUtil.isEmpty(order.getRoomNo())){
+            criteria= example.createCriteria().andRoomNoEqualTo(order.getRoomNo());
+        }
+        if(!StringUtil.isEmpty(order.getUser())){
+            criteria= criteria.andUserEqualTo(order.getUser());
+        }
+        if(!StringUtil.isEmpty(order.getDay())){
+            criteria= criteria.andDayEqualTo(order.getDay());
+        }
+        return mrOrderMapper.countByExample(example);
     }
 
     @Override

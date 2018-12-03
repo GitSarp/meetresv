@@ -226,9 +226,12 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <select id="selectPrimitive" parameterType="com.meeting.meetresv.pojo.MrOrder" resultMap="BaseResultMap">
+  <select id="selectPrimitive" parameterType="com.meeting.meetresv.pojo.page.OrderPage" resultMap="BaseResultMap">
     select * from mr_order
     <include refid="searchBy" />
+    <if test="limit !=null and limit !=0">
+      limit #{offset,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+    </if>
   </select>
 
   <!-- 基本的sql查询条件公共引用 -->
@@ -243,9 +246,9 @@
       <if test="day !=null and day !=''">
         and day = #{day,jdbcType=VARCHAR}
       </if>
-      <if test="purpose !=null and purpose !=''">
-        and purpose = #{purpose,jdbcType=VARCHAR}
-      </if>
+      <!--<if test="purpose !=null and purpose !=''">-->
+        <!--and purpose = #{purpose,jdbcType=VARCHAR}-->
+      <!--</if>-->
     </trim>
   </sql>
 </mapper>

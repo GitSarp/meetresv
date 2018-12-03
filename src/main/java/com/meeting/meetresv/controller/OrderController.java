@@ -2,7 +2,9 @@ package com.meeting.meetresv.controller;
 
 import com.meeting.meetresv.common.CusResult;
 import com.meeting.meetresv.pojo.MrOrder;
+import com.meeting.meetresv.pojo.MrOrderExample;
 import com.meeting.meetresv.pojo.MrUser;
+import com.meeting.meetresv.pojo.page.OrderPage;
 import com.meeting.meetresv.service.OrderService;
 import com.meeting.meetresv.utils.DateUtil;
 import com.meeting.meetresv.utils.StringUtil;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,15 +55,33 @@ public class OrderController extends BaseController{
         return new CusResult(doResult(orderService.orderRoom(order)),"");
     }
 
+//    @ApiOperation(value="预约查询", notes="查询预约信息")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "roomNo", value = "会议室编号", dataType = "String"),
+//            @ApiImplicitParam(name = "user", value = "预约者姓名", dataType = "String"),
+//            @ApiImplicitParam(name = "day", value = "工作日", dataType = "String"),
+//            @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")})
+//    @RequestMapping(value = "/query",method = {RequestMethod.POST, RequestMethod.GET})
+//    public List<MrOrder> query(OrderPage order){
+//        return orderService.query(order);
+//    }
+
     @ApiOperation(value="预约查询", notes="查询预约信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roomNo", value = "会议室编号", dataType = "String"),
             @ApiImplicitParam(name = "user", value = "预约者姓名", dataType = "String"),
             @ApiImplicitParam(name = "day", value = "工作日", dataType = "String"),
-            @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")})
+//            @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String"),
+            @ApiImplicitParam(name = "limit", value = "每页记录数", dataType = "int"),
+            @ApiImplicitParam(name = "offset", value = "页码", dataType = "int")})
     @RequestMapping(value = "/query",method = {RequestMethod.POST, RequestMethod.GET})
-    public List<MrOrder> query(MrOrder order){
-        return orderService.query(order);
+    public Map<String,Object> pageQuery(OrderPage order){
+        Map result=new HashMap();
+        result.put("page",order.getOffset()/order.getLimit()+1);
+        result.put("rows",orderService.query(order));
+        result.put("total",orderService.count(order));
+        order.setOffset((order.getOffset()-1)*order.getLimit());
+        return result;
     }
 
     @ApiOperation(value="取消预约", notes="取消预约信息")

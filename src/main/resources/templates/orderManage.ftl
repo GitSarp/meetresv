@@ -24,14 +24,43 @@
 
     <div class="container">
         <h1>预约管理</h1>
-        <p class="toolbar">
-            <a class="create btn btn-default" href="javascript:">新增</a>
-            <span class="alert"></span>
-        </p>
+        <br><br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                查询面板
+            </div>
+            <div class="panel-body form-group toolbar" style="margin-bottom:0px;">
+                <label class="col-md-1 control-label" style="text-align: right; margin-top:5px">预约人：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="user" id="search_name"/>
+                </div>
+                <label class="col-md-1 control-label" style="text-align: right; margin-top:5px">会议室：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="roomNo" id="search_roomno"/>
+                </div>
+                <label class="col-md-1 control-label" style="text-align: right; margin-top:5px">工作日：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="day" id="search_day"/>
+                </div>
+                <div class="col-md-1 col-md-offset-1">
+                    <button class="btn btn-default" id="search_btn">查询</button>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary create" href="javascript:">新增</button>
+                </div>
+                <span class="alert"></span>
+            </div>
+        </div>
+
+
+        <#--<p class="toolbar">-->
+            <#--<a class="create btn btn-default" href="javascript:">新增</a>-->
+            <#--<span class="alert"></span>-->
+        <#--</p>-->
         <table id="table"
                data-show-refresh="true"
                data-show-columns="true"
-               data-search="true"
+               <#--data-search="true"不显示内置搜索-->
                data-query-params="queryParams"
                data-toolbar=".toolbar">
             <thead>
@@ -39,7 +68,7 @@
                 <th data-field="id">预约id</th>
                 <th data-field="roomNo">会议室编号</th>
                 <th data-field="user">预约人</th>
-                <th data-field="day">预约人</th>
+                <th data-field="day">工作日</th>
                 <th data-field="period">占用时段</th>
                 <th data-field="purpose">用途</th>
                 <th data-field="action"
@@ -51,6 +80,23 @@
             </tr>
             </thead>
         </table>
+
+        <#--<div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">-->
+            <#--<button id="btn_add" type="button" class="create btn btn-default" href="javascript:">-->
+                <#--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增-->
+            <#--</button>-->
+            <#--<span class="alert"></span>-->
+
+            <#--<button id="btn_edit" type="button" class="btn btn-default" style="display: none; border-radius: 0">-->
+                <#--<span class="glyphicon glyphicon-pencil" aria-hidden="true" ></span>修改-->
+            <#--</button>-->
+            <#--<button id="btn_delete" type="button" class="btn btn-default" style="display: none;">-->
+                <#--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除-->
+            <#--</button>-->
+            <#--<button id="btn_add" type="button" class="btn btn-default">-->
+                <#--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增-->
+            <#--</button>-->
+        <#--</div>-->
     </div>
 
     <div id="modal" class="modal fade">
@@ -90,43 +136,27 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+
+
     <script>
-        var $table = $('#table').bootstrapTable({
-                    url: "/order/query",
-                    toolbar: '#toolbar', //工具按钮用哪个容器
-                    //striped: true, //是否显示行间隔色
-                    cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
-                    pagination: true, //是否显示分页
-                    sortable: true, //是否启用排序
-                    sortOrder: "asc", //排序方式
-                    //queryParams: postQueryParams,//传递参数（*）
-                    //sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
-                    pageSize: 10, //每页的记录行数（*）
-                    pageList: [10, 25, 50, 100], //可供选择的每页的行数（*）
-                    strictSearch: true,
-    //            height: table_h, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度,设置了行高后编辑时标头宽度不会随着下面的行改变，且颜色也不会改变？？？？
-                    uniqueId: "id", //每一行的唯一标识，一般为主键列
-                    cardView: false, //是否显示详细视图
-                    detailView: false, //是否显示父子表
-                    paginationHAlign: "left",
-                    singleSelect: true,
-                    search: true,               //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
-                    //strictSearch: true,
-                    showColumns: true, //是否显示所有的列
-                    showRefresh: true, //是否显示刷新按钮
-                    clickToSelect: true, //是否启用点击选中行
-                    paginationPreText: "<<",
-                    paginationNextText: ">>"
-                }),
+        var $table = TableInit(),
                 $modal = $('#modal').modal({show: false}),
                 $alert = $('.alert').hide();
 
         $(function () {
-            // create event
+            // 新增
             $('.create').click(function () {
                 showModal($(this).text());
             });
 
+            //查询按钮事件
+            $('#search_btn').click(function(){
+                $('#table').bootstrapTable('refreshOptions',{pageNumber:1});//搜索时重置为第一页
+                $('#table').bootstrapTable('refresh', {url: '/order/query'});
+            });
+
+            //提交
             $modal.find('.submit').click(function () {
                 var row = {};
                 $modal.find('input[name]').each(function () {
@@ -156,10 +186,59 @@
                     }
                 });
             });
+
+            //模态框关闭时清除数据
+            $("#modal").on("hidden.bs.modal", function() {
+                // $(this).data("id",)
+                $(this).removeData("bs.modal");
+            });
         });
 
+        //得到查询的参数
         function queryParams(params) {
-            return {};
+            var order = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit, //页面大小
+                offset: params.offset, //页码
+                user: $("#search_name").val(),
+                roomNo: $("#search_roomno").val(),
+                day: $("#search_day").val()
+            };
+            return order;
+        }
+
+        function TableInit(){//定义一个初始化方法
+                return $('#table').bootstrapTable({
+                    url: "/order/query",
+                    toolbar: '#toolbar', //工具按钮用哪个容器
+                    striped: true,//设置为 true 会有隔行变色效果
+                    undefinedText: "空",//当数据为 undefined 时显示的字符
+                    cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+                    pagination: true, //是否显示分页
+                    sortable: true, //是否启用排序
+                    sortOrder: "asc", //排序方式
+                    queryParamsType:'limit',//查询参数组织方式
+                    queryParams: queryParams,//传递参数（*）
+                    sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
+                    pageNumber: 1,//首页页码 ;初始化加载第一页，默认第一页
+                    pageSize: 5, //每页的记录行数（*）
+                    pageList: [5,10, 20, 30], //可供选择的每页的行数（*）
+                    smartDisplay:false,//总是显示分页栏
+                    strictSearch: true,
+                    //            height: table_h, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度,设置了行高后编辑时标头宽度不会随着下面的行改变，且颜色也不会改变？？？？
+                    uniqueId: "id", //每一行的唯一标识，一般为主键列
+                    cardView: false, //是否显示详细视图
+                    detailView: false, //是否显示父子表
+                    paginationHAlign: "left",
+                    singleSelect: true,
+                    // search: true, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
+                    //strictSearch: true,
+                    showColumns: true, //是否显示所有的列
+                    showRefresh: true, //是否显示刷新按钮
+                    clickToSelect: true, //是否启用点击选中行
+                    paginationPreText: "<<",
+                    locale:'zh-CN',//中文支持,
+                    paginationNextText: ">>"
+                });
         }
 
         function actionFormatter(value) {
@@ -215,11 +294,6 @@
             }, 3000);
         }
 
-        //清除弹窗原数据
-        $("#modal").on("hidden.bs.modal", function() {
-            // $(this).data("id",)
-            $(this).removeData("bs.modal");
-        });
     </script>
 </body>
 </html>

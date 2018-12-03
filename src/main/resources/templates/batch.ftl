@@ -13,7 +13,7 @@
     <div><label>${msg!""}</label></div>
     </#if>
 
-    <p>用户导入</p>
+    <h2>用户导入</h2>
     <div>
         <p>选择导入用户excel</p>
         <form action="/admin/uploadUser" method="POST" enctype="multipart/form-data">
@@ -21,7 +21,7 @@
         </form>
     </div>
 
-    <p>会议室导入</p>
+    <h2>会议室导入</h2>
 
     <div>
         <p>选择会议室excel</p>
