@@ -4,6 +4,7 @@ import com.meeting.meetresv.mapper.MrMeetingroomMapper;
 import com.meeting.meetresv.pojo.MrMeetingroom;
 import com.meeting.meetresv.pojo.MrMeetingroomExample;
 import com.meeting.meetresv.service.RoomService;
+import com.meeting.meetresv.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,12 @@ public class RoomServiceImpl implements RoomService {
     MrMeetingroomMapper mrMeetingroomMapper;
 
     @Override
-    public List<MrMeetingroom> getAllRoom(){
-        return mrMeetingroomMapper.selectByExample(new MrMeetingroomExample());
+    public List<MrMeetingroom> getAllRoom(String roomNo){
+        MrMeetingroomExample example=new MrMeetingroomExample();
+        if(!StringUtil.isEmpty(roomNo)){
+            example.createCriteria().andRoomNoEqualTo(roomNo);
+        }
+        return mrMeetingroomMapper.selectByExample(example);
     }
 
     @Override

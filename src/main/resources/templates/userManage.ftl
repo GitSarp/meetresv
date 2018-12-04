@@ -56,8 +56,8 @@
                     <input type="text" class="form-control" name="phone" id="search_phone"/>
                 </div>
                 <select class="col-md-1 combobox" name="role" id="search_role">
-                    <option></option>
-                    <option value="false">普通用户</option>
+                    <option value="">角色</option>
+                    <option value="false">普通</option>
                     <option value="true">管理员</option>
                 </select>
                 <div class="col-md-1">
@@ -234,7 +234,7 @@
             if(value==1){
                 return "管理员";
             }else {
-                return "普通用户";
+                return "普通";
             }
         }
 

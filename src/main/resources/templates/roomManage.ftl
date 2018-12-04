@@ -32,14 +32,37 @@
 
     <div class="container">
         <h1>会议室管理</h1>
-        <p class="toolbar">
-            <a class="create btn btn-default" href="javascript:">新增</a>
-            <span class="alert"></span>
-        </p>
+
+        <br><br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                查询面板
+            </div>
+            <div class="panel-body form-group toolbar" style="margin-bottom:0px;">
+                <label class="col-md-2 control-label" style="text-align: right; margin-top:5px">会议室编号：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="roomNo" id="search_roomNo"/>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-default" id="search_btn">查询</button>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary create" href="javascript:">新增</button>
+                </div>
+                <span class="alert"></span>
+            </div>
+        </div>
+
+
+
+        <#--<p class="toolbar">-->
+            <#--<a class="create btn btn-default" href="javascript:">新增</a>-->
+            <#--<span class="alert"></span>-->
+        <#--</p>-->
         <table id="table"
                data-show-refresh="true"
                data-show-columns="true"
-               data-search="true"
+               <#--data-search="true"-->
                data-query-params="queryParams"
                data-toolbar=".toolbar">
             <thead>
@@ -92,10 +115,10 @@
                     pagination: true, //是否显示分页
                     sortable: true, //是否启用排序
                     sortOrder: "asc", //排序方式
-                    //queryParams: postQueryParams,//传递参数（*）
+                    queryParams: queryParams,//传递参数（*）
                     //sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
                     pageSize: 10, //每页的记录行数（*）
-                    pageList: [10, 25, 50, 100], //可供选择的每页的行数（*）
+                    pageList: [5,10, 20, 30], //可供选择的每页的行数（*）
                     strictSearch: true,
     //            height: table_h, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度,设置了行高后编辑时标头宽度不会随着下面的行改变，且颜色也不会改变？？？？
                     uniqueId: "id", //每一行的唯一标识，一般为主键列
@@ -103,7 +126,7 @@
                     detailView: false, //是否显示父子表
                     paginationHAlign: "left",
                     singleSelect: true,
-                    search: true,               //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
+                    // search: true,               //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
                     //strictSearch: true,
                     showColumns: true, //是否显示所有的列
                     showRefresh: true, //是否显示刷新按钮
@@ -115,9 +138,15 @@
                 $alert = $('.alert').hide();
 
         $(function () {
-            // create event
+            //新增
             $('.create').click(function () {
                 showModal($(this).text());
+            });
+
+            //查询按钮事件
+            $('#search_btn').click(function(){
+                // $('#table').bootstrapTable('refreshOptions',{pageNumber:1});//搜索时重置为第一页
+                $('#table').bootstrapTable('refresh', {url: '/rooms/getRooms'});
             });
 
             $modal.find('.submit').click(function () {
@@ -152,7 +181,10 @@
         });
 
         function queryParams(params) {
-            return {};
+            var roomNo = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                roomNo: $("#search_roomNo").val()
+            };
+            return roomNo;
         }
 
         function actionFormatter(value) {

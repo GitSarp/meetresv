@@ -224,11 +224,11 @@
                     <li>
                         <a href="/admin/modifyPD" target="mainFrame">修改密码</a>
                     </li>
-                    <#--<li>-->
-                        <#--<a href="/admin/logout" target="mainFrame">退出系统</a>-->
-                    <#--</li>-->
                     <li>
-                        <a href="#" target="mainFrame">查看个人信息</a>
+                        <a href="/admin/logout" target="mainFrame">退出系统</a>
+                    </li>
+                    <li>
+                        <a target="mainFrame">查看个人信息</a>
                     </li>
                 </ul>
             </li>

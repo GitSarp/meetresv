@@ -5,6 +5,8 @@ import com.meeting.meetresv.pojo.MrMeetingroom;
 import com.meeting.meetresv.service.RoomService;
 import com.meeting.meetresv.utils.EncryptUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,9 +23,12 @@ public class RoomController extends BaseController {
     RoomService roomService;
 
     @ApiOperation(value="查询会议室", notes="获取会议室列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomNo", value = "会议室编号",  dataType = "String")
+    })
     @GetMapping("/getRooms")
-    List<MrMeetingroom> getAllRoom(){
-        return roomService.getAllRoom();
+    List<MrMeetingroom> getAllRoom(String roomNo){
+        return roomService.getAllRoom(roomNo);
     }
 
     @ApiOperation(value="新增会议室", notes="增加会议室")

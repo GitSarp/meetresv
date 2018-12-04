@@ -1,6 +1,7 @@
 package com.meeting.meetresv.utils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +11,8 @@ import java.lang.reflect.Modifier;
 public class ReflectUtil {
 
 
-    private static final Logger logger = Logger.getLogger(ReflectUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(ReflectUtil.class);
+//    private static final Logger logger = Logger.getLogger(ReflectUtil.class);
 
     public static Object invokeSetMethod(Class<?> claszz, Object o, String name, Class<?>[] argTypes, Object[] args) {
         Object ret = null;

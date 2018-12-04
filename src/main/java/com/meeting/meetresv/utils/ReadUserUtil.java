@@ -2,10 +2,11 @@ package com.meeting.meetresv.utils;
 
 import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.service.UserService;
-import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
@@ -18,7 +19,8 @@ import java.util.Map;
 
 public class ReadUserUtil {
 
-    private static final Logger logger = Logger.getLogger(ReadUserUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(ReadUserUtil.class);
+//    private static final Logger logger = Logger.getLogger(ReadUserUtil.class);
 
     static Map<String,String> zhToEn=new HashMap<String,String>();//中英文映射
     static Map<Integer,String> map=new HashMap<Integer,String>();//列，字段名
@@ -105,7 +107,7 @@ public class ReadUserUtil {
                     }catch (DuplicateKeyException e){
 //                        e.printStackTrace();
                         userModel.setPassword("");//避免打印加密后的密码
-                        logger.error("导入错误："+userModel.toString());
+                        logger.error("用户名重复，未导入："+userModel.toString());
                         continue;
                     }
                 }

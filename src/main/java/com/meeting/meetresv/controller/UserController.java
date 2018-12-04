@@ -3,13 +3,19 @@ package com.meeting.meetresv.controller;
 import com.meeting.meetresv.common.CusResult;
 import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
+import com.meeting.meetresv.pojo.WechatUser;
 import com.meeting.meetresv.service.UserService;
+import com.meeting.meetresv.service.WechatService;
 import com.meeting.meetresv.utils.EncryptUtil;
 import com.meeting.meetresv.utils.ReadUserUtil;
+import com.meeting.meetresv.utils.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -20,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 @Api(value = "UserController",description = "用户相关api")
 @RestController
@@ -28,29 +33,52 @@ public class UserController extends BaseController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    WechatService wechatService;
 
-    private static final Logger logger= Logger.getLogger(UserController.class);
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+
+//    private static final Logger logger= Logger.getLogger(UserController.class);
 
     @ApiOperation(value="用户登录", notes="用户登录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "姓名", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
+            @ApiImplicitParam(name = "wechat_no", value = "微信标识", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "name", value = "姓名",  dataType = "String"),
+            @ApiImplicitParam(name = "password", value = "密码", dataType = "String")
     })
     @PostMapping("/login")
-    public CusResult login(HttpServletRequest request,MrUser user){
-        if(checkLogin(request)){
-            return new CusResult("error","无需重复登录！");
+    public CusResult login(HttpServletRequest request,MrUser user,String wechat_no){
+//        if(checkLogin(request)){
+//            return new CusResult("error","无需重复登录！");
+//        }
+        if(StringUtil.isEmpty(wechat_no)){
+            return new CusResult("error","必须传入微信标识！");
         }
-        MrUserExample userExample=new MrUserExample();
-        userExample.createCriteria().andNameEqualTo(user.getName());
-        List<MrUser> users=select(userExample);
-        for(MrUser usr:users){
-            if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
-                request.getSession().setAttribute("user",usr);
-                return new CusResult("success","登录成功！");
+
+        if(wechatService.validate(wechat_no).size()>0){
+            request.getSession().setAttribute("user",user);
+            return new CusResult("success","成功！");
+        }else{
+            if(user.getName()!=null){
+                MrUserExample userExample=new MrUserExample();
+                userExample.createCriteria().andNameEqualTo(user.getName());
+                List<MrUser> users=select(userExample);
+                for(MrUser usr:users){
+                    if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
+                        //插入绑定
+                        if(wechatService.insert(new WechatUser(wechat_no,usr.getId()))==1){
+                            request.getSession().setAttribute("user",usr);
+                            return new CusResult("success","成功！");
+                        }else{
+                            return new CusResult("error","系统内部错误！");
+                        }
+                    }
+                }
+                return new CusResult("error","账号或密码错误，请联系管理员！");
+            }else{
+                return new CusResult("info","首次请登录！");
             }
         }
-        return new CusResult("error","账号或密码错误，请联系管理员！");
     }
 
     @ApiOperation(value="用户注销", notes="用户注销")

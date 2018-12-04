@@ -6,13 +6,15 @@ import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
 import com.meeting.meetresv.pojo.page.UserPage;
 import com.meeting.meetresv.service.UserService;
+import com.meeting.meetresv.service.WechatService;
 import com.meeting.meetresv.utils.EncryptUtil;
 import com.meeting.meetresv.utils.ReadUserUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -33,8 +35,11 @@ public class AdminContoller extends BaseController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    WechatService wechatService;
 
-    private static final Logger logger= Logger.getLogger(UserController.class);
+    private static Logger logger = LoggerFactory.getLogger(UserController.class);
+//    private static final Logger logger= Logger.getLogger(UserController.class);
 
     @GetMapping("/login")
     public String adminLogin(){
@@ -198,7 +203,14 @@ public class AdminContoller extends BaseController {
 
     @DeleteMapping("/del")
     @ResponseBody  CusResult delete(Integer id,Model model){
-        return new CusResult(doResult(userService.deleteByPrimaryKey(id)),"");
+        int tmp1=userService.deleteByPrimaryKey(id);
+        //删除微信关联
+        int tmp2=wechatService.deleteByUserId(id);
+        if((tmp1==1)&&(tmp2==1)){
+            return new CusResult("success","删除用户成功");
+        } else {
+            return new CusResult("error","删除用户失败！");
+        }
     }
 
 
