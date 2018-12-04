@@ -21,11 +21,11 @@
         </form>
     </div>
 
-    <h2>会议室导入</h2>
+    <h2>会议室导入(敬请期待...)</h2>
 
     <div>
         <p>选择会议室excel</p>
-        <form action="#" method="POST" enctype="multipart/form-data">
+        <form enctype="multipart/form-data">
             <label>文件：</label><input type="file" name="file"/><input type="submit" value="上传"/>
         </form>
     </div>

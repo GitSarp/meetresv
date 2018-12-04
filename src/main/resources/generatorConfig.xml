@@ -44,6 +44,7 @@
 		<!-- 指定数据库表 -->
 		<!--<table schema="" tableName="mr_user"></table>-->
 		<!--<table schema="" tableName="mr_order"></table>-->
-		<table schema="" tableName="mr_meetingroom"></table>
+		<!--<table schema="" tableName="mr_meetingroom"></table>-->
+		<table schema="" tableName="wechat_user"></table>
 	</context>
 </generatorConfiguration>

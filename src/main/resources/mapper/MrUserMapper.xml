@@ -225,4 +225,30 @@
       role = #{role,jdbcType=BIT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectPrimitive" parameterType="com.meeting.meetresv.pojo.page.UserPage" resultMap="BaseResultMap">
+    select * from mr_user
+    <include refid="searchBy" />
+    <if test="limit !=null and limit !=0">
+      limit #{offset,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <!-- 基本的sql查询条件公共引用 -->
+  <sql id="searchBy">
+    <trim prefix="where" prefixOverrides="and|or">
+      <if test="name !=null and name !=''">
+        name  = #{name,jdbcType=VARCHAR}
+      </if>
+      <if test="department !=null and department !=''">
+        and department = #{department,jdbcType=VARCHAR}
+      </if>
+      <if test="phone !=null and phone !=''">
+        and phone = #{phone,jdbcType=VARCHAR}
+      </if>
+      <if test="role !=null">
+        and role = #{role,jdbcType=TINYINT}
+      </if>
+    </trim>
+  </sql>
 </mapper>

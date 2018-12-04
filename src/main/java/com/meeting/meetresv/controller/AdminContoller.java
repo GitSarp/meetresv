@@ -4,6 +4,7 @@ import com.meeting.meetresv.common.CusResult;
 import com.meeting.meetresv.pojo.MrMeetingroom;
 import com.meeting.meetresv.pojo.MrUser;
 import com.meeting.meetresv.pojo.MrUserExample;
+import com.meeting.meetresv.pojo.page.UserPage;
 import com.meeting.meetresv.service.UserService;
 import com.meeting.meetresv.utils.EncryptUtil;
 import com.meeting.meetresv.utils.ReadUserUtil;
@@ -21,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "AdminContoller",description = "管理员相关api")
 @Controller
@@ -205,8 +208,22 @@ public class AdminContoller extends BaseController {
         return new CusResult(doResult(userService.updateByPrimaryKey(user)),"");
     }
 
+    @ApiOperation(value="用户查询", notes="查询用户信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "用户姓名", dataType = "String"),
+            @ApiImplicitParam(name = "department", value = "部门", dataType = "String"),
+            @ApiImplicitParam(name = "phone", value = "手机号", dataType = "String"),
+            @ApiImplicitParam(name = "limit", value = "每页记录数", dataType = "int"),
+            @ApiImplicitParam(name = "offset", value = "页码", dataType = "int")})
     @GetMapping("/getUsers")
-    @ResponseBody List<MrUser> getUsers(){
-        return select(new MrUserExample());
+    @ResponseBody Map<String,Object> getUsers(UserPage userPage){
+        Map result=new HashMap();
+        if(userPage.getLimit()!=0){
+            result.put("page",userPage.getOffset()/userPage.getLimit()+1);
+        }
+        result.put("rows",userService.query(userPage));
+        result.put("total",userService.count(userPage));
+        userPage.setOffset((userPage.getOffset()-1)*userPage.getLimit());
+        return result;
     }
 }

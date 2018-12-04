@@ -98,6 +98,7 @@ public class ReadUserUtil {
                 }
                 if(rowNum!=0){
                     userModel.setPassword(userModel.getPhone());//密码初始化为手机号或固定值
+                    userModel.setRole(false);//只支持导入普通用户
                     EncryptUtil.encrypt(userModel);
                     try{
                         userService.insert(userModel);

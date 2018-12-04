@@ -32,14 +32,49 @@
 
     <div class="container">
         <h1>用户管理</h1>
-        <p class="toolbar">
-            <a class="create btn btn-default" href="javascript:">新增</a>
-            <span class="alert"></span>
-        </p>
+        <#--<p class="toolbar">-->
+            <#--<a class="create btn btn-default" href="javascript:">新增</a>-->
+            <#--<span class="alert"></span>-->
+        <#--</p>-->
+
+        <br><br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                查询面板
+            </div>
+            <div class="panel-body form-group toolbar" style="margin-bottom:0px;">
+                <label class="col-md-1 control-label" style="text-align: right; margin-top:5px">姓名：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="name" id="search_name"/>
+                </div>
+                <label class="col-md-1 control-label" style="text-align: right; margin-top:5px">部门：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="department" id="search_department"/>
+                </div>
+                <label class="col-md-1 control-label" style="text-align: right; margin-top:5px">手机号：</label>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="phone" id="search_phone"/>
+                </div>
+                <select class="col-md-1 combobox" name="role" id="search_role">
+                    <option></option>
+                    <option value="false">普通用户</option>
+                    <option value="true">管理员</option>
+                </select>
+                <div class="col-md-1">
+                    <button class="btn btn-default" id="search_btn">查询</button>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary create" href="javascript:">新增</button>
+                </div>
+                <span class="alert"></span>
+            </div>
+        </div>
+
+
         <table id="table"
                data-show-refresh="true"
                data-show-columns="true"
-               data-search="true"
+               <#--data-search="true"-->
                data-query-params="queryParams"
                data-toolbar=".toolbar">
             <thead>
@@ -48,6 +83,7 @@
                 <th data-field="name">姓名</th>
                 <th data-field="department">部门</th>
                 <th data-field="phone">手机号</th>
+                <th data-field="role" data-formatter="roleFormatter">角色</th>
                 <th data-field="action"
                     data-align="center"
                     data-formatter="actionFormatter"
@@ -84,6 +120,10 @@
                         <span class="input-group-addon">手机号</span>
                         <input class="form-control" type="text" name="phone" id="phone">
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">角色(管理员填1)</span>
+                        <input class="form-control" type="text" name="role" id="role">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -96,16 +136,15 @@
         var $table = $('#table').bootstrapTable({
                     url: "/admin/getUsers",
                     toolbar: '#toolbar', //工具按钮用哪个容器
-                    //striped: true, //是否显示行间隔色
+                    striped: true, //是否显示行间隔色
                     cache: false, //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
                     pagination: true, //是否显示分页
                     sortable: true, //是否启用排序
                     sortOrder: "asc", //排序方式
-                    // queryParams: {"role":"false"},//不查出管理员
-                    //queryParams: postQueryParams,//传递参数（*）
-                    //sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
+                    queryParams: queryParams,//传递参数（*）
+                    sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
                     pageSize: 10, //每页的记录行数（*）
-                    pageList: [10, 25, 50, 100], //可供选择的每页的行数（*）
+                    pageList: [5,10, 20, 30], //可供选择的每页的行数（*）
                     strictSearch: true,
     //            height: table_h, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度,设置了行高后编辑时标头宽度不会随着下面的行改变，且颜色也不会改变？？？？
                     uniqueId: "id", //每一行的唯一标识，一般为主键列
@@ -113,21 +152,28 @@
                     detailView: false, //是否显示父子表
                     paginationHAlign: "left",
                     singleSelect: true,
-                    search: true,               //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
+                    // search: true,               //是否显示表格搜索，此搜索是客户端搜索，不会进服务端
                     //strictSearch: true,
                     showColumns: true, //是否显示所有的列
                     showRefresh: true, //是否显示刷新按钮
                     clickToSelect: true, //是否启用点击选中行
                     paginationPreText: "<<",
+                    locale:'zh-CN',//中文支持,
                     paginationNextText: ">>"
                 }),
                 $modal = $('#modal').modal({show: false}),
                 $alert = $('.alert').hide();
 
         $(function () {
-            // create event
+            // 新增
             $('.create').click(function () {
                 showModal($(this).text());
+            });
+
+            //查询按钮事件
+            $('#search_btn').click(function(){
+                $('#table').bootstrapTable('refreshOptions',{pageNumber:1});//搜索时重置为第一页
+                $('#table').bootstrapTable('refresh', {url: '/admin/getUsers'});
             });
 
             $modal.find('.submit').click(function () {
@@ -135,6 +181,10 @@
                 $modal.find('input[name]').each(function () {
                     row[$(this).attr('name')] = $(this).val();
                 });
+                row["role"]==false;
+                if(row["role"]==1){
+                    row["role"]==true;
+                }
                 var url="/add";
                 if($modal.data('id')){
                     url="/update";
@@ -162,7 +212,15 @@
         });
 
         function queryParams(params) {
-            return {};
+            var user = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                limit: params.limit, //页面大小
+                offset: params.offset, //页码
+                name: $("#search_name").val(),
+                department: $("#search_department").val(),
+                phone: $("#search_phone").val(),
+                role: $("#search_role").val()
+            };
+            return user;
         }
 
         function actionFormatter(value) {
@@ -170,6 +228,14 @@
                 '<a class="update" href="javascript:" title="更新"><i class="glyphicon glyphicon-edit"></i></a>',
                 '<a class="remove" href="javascript:" title="删除"><i class="glyphicon glyphicon-remove-circle"></i></a>',
             ].join('');
+        }
+
+        function roleFormatter(value){
+            if(value==1){
+                return "管理员";
+            }else {
+                return "普通用户";
+            }
         }
 
         // update and delete events
@@ -204,8 +270,17 @@
             }; // 更新传row，新增没有传
             $modal.data('id', row.id);//新增没有‘id’
             $modal.find('.modal-title').text(title);
-            for (var name in row) {
-                $modal.find('input[name="' + name + '"]').val(row[name]);
+
+            //更新时控件传值，显示role为0/1
+            if(title=="更新"){
+                for (var name in row) {
+                    $modal.find('input[name="' + name + '"]').val(row[name]);
+                }
+                if(row.role==true){
+                    $modal.find('input[name=role]').val(1);
+                }else{
+                    $modal.find('input[name=role]').val(0);
+                }
             }
             $modal.modal('show');
         }
@@ -224,19 +299,5 @@
             $(this).removeData("bs.modal");
         });
     </script>
-
-
-    <#--<div>-->
-        <#--<table id="userTable" data-toggle="table" data-url="/admin/getUsers">-->
-            <#--<thead>-->
-            <#--<tr>-->
-                <#--<th data-field="id">用户ID</th>-->
-                <#--<th data-field="name">姓名</th>-->
-                <#--<th data-field="department">部门</th>-->
-                <#--<th data-field="phone">手机号</th>-->
-            <#--</tr>-->
-            <#--</thead>-->
-        <#--</table>-->
-    <#--</div>-->
 </body>
 </html>

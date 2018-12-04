@@ -31,9 +31,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public long count(MrOrder order) {
         MrOrderExample example=new MrOrderExample();
-        MrOrderExample.Criteria criteria=null;
+        MrOrderExample.Criteria criteria=example.createCriteria();
         if(!StringUtil.isEmpty(order.getRoomNo())){
-            criteria= example.createCriteria().andRoomNoEqualTo(order.getRoomNo());
+            criteria= criteria.andRoomNoEqualTo(order.getRoomNo());
         }
         if(!StringUtil.isEmpty(order.getUser())){
             criteria= criteria.andUserEqualTo(order.getUser());

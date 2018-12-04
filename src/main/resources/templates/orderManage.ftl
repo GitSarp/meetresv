@@ -80,23 +80,6 @@
             </tr>
             </thead>
         </table>
-
-        <#--<div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">-->
-            <#--<button id="btn_add" type="button" class="create btn btn-default" href="javascript:">-->
-                <#--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增-->
-            <#--</button>-->
-            <#--<span class="alert"></span>-->
-
-            <#--<button id="btn_edit" type="button" class="btn btn-default" style="display: none; border-radius: 0">-->
-                <#--<span class="glyphicon glyphicon-pencil" aria-hidden="true" ></span>修改-->
-            <#--</button>-->
-            <#--<button id="btn_delete" type="button" class="btn btn-default" style="display: none;">-->
-                <#--<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除-->
-            <#--</button>-->
-            <#--<button id="btn_add" type="button" class="btn btn-default">-->
-                <#--<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增-->
-            <#--</button>-->
-        <#--</div>-->
     </div>
 
     <div id="modal" class="modal fade">
@@ -220,9 +203,9 @@
                     queryParams: queryParams,//传递参数（*）
                     sidePagination: "server",      //分页方式：client客户端分页，server服务端分页（*）
                     pageNumber: 1,//首页页码 ;初始化加载第一页，默认第一页
-                    pageSize: 5, //每页的记录行数（*）
+                    pageSize: 10, //每页的记录行数（*）
                     pageList: [5,10, 20, 30], //可供选择的每页的行数（*）
-                    smartDisplay:false,//总是显示分页栏
+                    // smartDisplay:false,//总是显示分页栏
                     strictSearch: true,
                     //            height: table_h, //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度,设置了行高后编辑时标头宽度不会随着下面的行改变，且颜色也不会改变？？？？
                     uniqueId: "id", //每一行的唯一标识，一般为主键列

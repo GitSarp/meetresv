@@ -28,3 +28,9 @@ CREATE TABLE `MeetResv`.`mr_order` (
   `purpose` VARCHAR(45) NULL,
   PRIMARY KEY (`id`));
 
+CREATE TABLE `MeetResv`.`wechat_user`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `wechat_id` varchar(50) NOT NULL,
+  `user_id` int(0) NOT NULL,
+  PRIMARY KEY (`id`)
+);

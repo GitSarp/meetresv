@@ -77,7 +77,9 @@ public class OrderController extends BaseController{
     @RequestMapping(value = "/query",method = {RequestMethod.POST, RequestMethod.GET})
     public Map<String,Object> pageQuery(OrderPage order){
         Map result=new HashMap();
-        result.put("page",order.getOffset()/order.getLimit()+1);
+        if(order.getLimit()!=0){
+            result.put("page",order.getOffset()/order.getLimit()+1);
+        }
         result.put("rows",orderService.query(order));
         result.put("total",orderService.count(order));
         order.setOffset((order.getOffset()-1)*order.getLimit());

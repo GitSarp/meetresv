@@ -31,4 +31,6 @@ public interface MrUserMapper {
     int updateByPrimaryKeySelective(MrUser record);
 
     int updateByPrimaryKey(MrUser record);
+
+    List<MrUser> selectPrimitive(MrUser user);
 }
