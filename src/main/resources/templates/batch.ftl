@@ -15,7 +15,7 @@
 
     <h2>用户导入</h2>
     <div>
-        <p>选择导入用户excel</p>
+        <p>选择导入用户excel(表头为姓名，手机号码，部门)</p>
         <form action="/admin/uploadUser" method="POST" enctype="multipart/form-data">
             <label>文件：</label><input type="file" name="file"/><input type="submit" value="上传"/>
         </form>

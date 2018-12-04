@@ -44,7 +44,8 @@ public class ReflectUtil {
             Method method=target.getClass().getMethod(methodName,paramType);
             ret = method.invoke(target,val);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            logger.error("调用user."+methodName+"方法失败");
+//            e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
