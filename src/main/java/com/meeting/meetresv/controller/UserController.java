@@ -7,25 +7,19 @@ import com.meeting.meetresv.pojo.WechatUser;
 import com.meeting.meetresv.service.UserService;
 import com.meeting.meetresv.service.WechatService;
 import com.meeting.meetresv.utils.EncryptUtil;
-import com.meeting.meetresv.utils.ReadUserUtil;
+import com.meeting.meetresv.utils.HttpUtil;
 import com.meeting.meetresv.utils.StringUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(value = "UserController",description = "用户相关api")
 @RestController
@@ -38,45 +32,71 @@ public class UserController extends BaseController {
 
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
-//    private static final Logger logger= Logger.getLogger(UserController.class);
+    //小程序登录参数
+//    private static final String  login_url="https://api.weixin.qq.com/sns/jscode2session";
+//    private static final String  appid="wx05ca89971b4a868b";
+//    private static final String  secret="28bb8ff8894cffa7f26c07929fb9fade";
+//    private static final String  grant_type="authorization_code";
+
+    private static String url="https://api.weixin.qq.com/sns/jscode2session?appid=wx05ca89971b4a868b&secret=28bb8ff8894cffa7f26c07929fb9fade&grant_type=authorization_code&js_code=";
 
     @ApiOperation(value="用户登录", notes="用户登录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "wechat_no", value = "微信标识", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "js_code", value = "微信登录标识", required = true, dataType = "String"),
             @ApiImplicitParam(name = "name", value = "姓名",  dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", dataType = "String")
     })
     @PostMapping("/login")
-    public CusResult login(HttpServletRequest request,MrUser user,String wechat_no){
+    public CusResult login(HttpServletRequest request,MrUser user,String js_code){
 //        if(checkLogin(request)){
 //            return new CusResult("error","无需重复登录！");
 //        }
-        if(StringUtil.isEmpty(wechat_no)){
-            return new CusResult("error","必须传入微信标识！");
+        if(StringUtil.isEmpty(js_code)){
+            return new CusResult("error","必须传入js_code！");
         }
 
-        if(wechatService.validate(wechat_no).size()>0){
-            request.getSession().setAttribute("user",user);
-            return new CusResult("success","成功！");
+        //小程序登录
+//        Map<String,String> params=new HashMap<>();
+//        params.put("appid",appid);
+//        params.put("secret",secret);
+//        params.put("grant_type",grant_type);
+//        params.put("js_code",js_code);
+//        Map result=HttpUtil.doReq1(login_url,params);
+
+        Map result=HttpUtil.doReq2(url+js_code);
+
+        Integer errorCode=(Integer) result.get("errcode");
+        String errorMsg=(String)result.get("errmsg");
+        String openId=(String)result.get("openid");
+
+        if((errorCode!=null)&&(errorCode!=0)){
+            return new CusResult("error","小程序登录失败,错误信息："+errorCode+";"+errorMsg);
         }else{
-            if(user.getName()!=null){
-                MrUserExample userExample=new MrUserExample();
-                userExample.createCriteria().andNameEqualTo(user.getName());
-                List<MrUser> users=select(userExample);
-                for(MrUser usr:users){
-                    if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
-                        //插入绑定
-                        if(wechatService.insert(new WechatUser(wechat_no,usr.getId()))==1){
-                            request.getSession().setAttribute("user",usr);
-                            return new CusResult("success","成功！");
-                        }else{
-                            return new CusResult("error","系统内部错误！");
+            //登录成功
+            if(wechatService.validate(openId).size()>0){
+                request.getSession().setAttribute("user",user);
+                return new CusResult("success","登录成功！");
+            }else{
+                //首次绑定
+                if(user.getName()!=null){
+                    MrUserExample userExample=new MrUserExample();
+                    userExample.createCriteria().andNameEqualTo(user.getName());
+                    List<MrUser> users=select(userExample);
+                    for(MrUser usr:users){
+                        if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
+                            //插入绑定
+                            if(wechatService.insert(new WechatUser(openId,usr.getId()))==1){
+                                request.getSession().setAttribute("user",usr);
+                                return new CusResult("success","登录成功！");
+                            }else{
+                                return new CusResult("error","预约系统错误！");
+                            }
                         }
                     }
+                    return new CusResult("error","绑定账号失败，账号或密码错误！");
+                }else {
+                    return new CusResult("info","首次请登录！");
                 }
-                return new CusResult("error","账号或密码错误，请联系管理员！");
-            }else{
-                return new CusResult("info","首次请登录！");
             }
         }
     }
