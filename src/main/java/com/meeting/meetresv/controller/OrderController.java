@@ -35,11 +35,12 @@ public class OrderController extends BaseController{
             @ApiImplicitParam(name = "roomNo", value = "会议室编号", required = true, dataType = "String"),
             @ApiImplicitParam(name = "day", value = "工作日，不传默认今天", dataType = "String"),
             @ApiImplicitParam(name = "period", value = "占用时段", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String"),
             @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")
     })
     @PostMapping("/add")
-    public CusResult orderRoom(HttpServletRequest request,MrOrder order){
-        if(!checkLogin(request)){
+    public CusResult orderRoom(HttpServletRequest request,MrOrder order,String skey){
+        if(!checkLogin(request,skey)){
             return new CusResult("error","请先登录！");
         }
         if(StringUtil.isEmpty(order.getDay())){
@@ -54,17 +55,6 @@ public class OrderController extends BaseController{
         }
         return new CusResult(doResult(orderService.orderRoom(order)),"");
     }
-
-//    @ApiOperation(value="预约查询", notes="查询预约信息")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "roomNo", value = "会议室编号", dataType = "String"),
-//            @ApiImplicitParam(name = "user", value = "预约者姓名", dataType = "String"),
-//            @ApiImplicitParam(name = "day", value = "工作日", dataType = "String"),
-//            @ApiImplicitParam(name = "purpose", value = "用途",  dataType = "String")})
-//    @RequestMapping(value = "/query",method = {RequestMethod.POST, RequestMethod.GET})
-//    public List<MrOrder> query(OrderPage order){
-//        return orderService.query(order);
-//    }
 
     @ApiOperation(value="预约查询", notes="查询预约信息")
     @ApiImplicitParams({
@@ -87,10 +77,11 @@ public class OrderController extends BaseController{
     }
 
     @ApiOperation(value="取消预约", notes="取消预约信息")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "预约id", required = true, dataType = "Integer")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "预约id", required = true, dataType = "Integer"),
+                        @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String")})
     @PostMapping("/del")
-    public CusResult cancelOrder(HttpServletRequest request, Integer id){
-        if(!checkLogin(request)){
+    public CusResult cancelOrder(HttpServletRequest request, Integer id,String skey){
+        if(!checkLogin(request,skey)){
             return new CusResult("error","请先登录！");
         }
         return new CusResult(doResult(orderService.cancelOrder(id)),"");

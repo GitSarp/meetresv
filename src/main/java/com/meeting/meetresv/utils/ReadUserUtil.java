@@ -1,6 +1,7 @@
 package com.meeting.meetresv.utils;
 
 import com.meeting.meetresv.pojo.MrUser;
+import com.meeting.meetresv.pojo.MrUserExample;
 import com.meeting.meetresv.service.UserService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -101,6 +102,14 @@ public class ReadUserUtil {
                 if(rowNum!=0){
                     //姓名为空，跳过循环
                     if(StringUtil.isEmpty(userModel.getName())){
+                        continue;
+                    }
+                    //用户存在则跳过
+                    MrUserExample example=new MrUserExample();
+                    MrUserExample.Criteria criteria=example.createCriteria();
+                    criteria.andNameEqualTo(userModel.getName());
+                    criteria.andPasswordEqualTo(EncryptUtil.md5Password(userModel.getPhone()));
+                    if(userService.selectByExample(example).size()>0){
                         continue;
                     }
                     userModel.setPassword(userModel.getPhone());//密码初始化为手机号或固定值

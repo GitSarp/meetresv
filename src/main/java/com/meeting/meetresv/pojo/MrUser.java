@@ -1,6 +1,8 @@
 package com.meeting.meetresv.pojo;
 
-public class MrUser {
+import java.io.Serializable;
+
+public class MrUser implements Serializable {
     private Integer id;
 
     private String name;

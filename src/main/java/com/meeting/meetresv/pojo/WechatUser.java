@@ -13,6 +13,12 @@ public class WechatUser {
         this.userId = userId;
     }
 
+    public WechatUser(Integer id,String wechatId, Integer userId) {
+        this.id=id;
+        this.wechatId = wechatId;
+        this.userId = userId;
+    }
+
     public Integer getId() {
         return id;
     }

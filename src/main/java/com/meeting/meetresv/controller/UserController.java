@@ -9,6 +9,7 @@ import com.meeting.meetresv.service.WechatService;
 import com.meeting.meetresv.utils.EncryptUtil;
 import com.meeting.meetresv.utils.HttpUtil;
 import com.meeting.meetresv.utils.StringUtil;
+import com.meeting.meetresv.utils.redis.RedisUtil;
 import io.swagger.annotations.*;
 
 import org.slf4j.Logger;
@@ -30,6 +31,9 @@ public class UserController extends BaseController {
     @Autowired
     WechatService wechatService;
 
+    @Autowired
+    RedisUtil redisUtil;
+
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //小程序登录参数
@@ -48,7 +52,7 @@ public class UserController extends BaseController {
     })
     @PostMapping("/login")
     public CusResult login(HttpServletRequest request,MrUser user,String js_code){
-//        if(checkLogin(request)){
+//        if(checkLogin(skey)){
 //            return new CusResult("error","无需重复登录！");
 //        }
         if(StringUtil.isEmpty(js_code)){
@@ -68,14 +72,16 @@ public class UserController extends BaseController {
         Integer errorCode=(Integer) result.get("errcode");
         String errorMsg=(String)result.get("errmsg");
         String openId=(String)result.get("openid");
+        String sessionKey=(String)result.get("session_key");
 
         if((errorCode!=null)&&(errorCode!=0)){
             return new CusResult("error","小程序登录失败,错误信息："+errorCode+";"+errorMsg);
         }else{
             //登录成功
-            if(wechatService.validate(openId).size()>0){
-                request.getSession().setAttribute("user",user);
-                return new CusResult("success","登录成功！");
+            List<WechatUser> bindList=wechatService.validate(openId);
+            if((bindList!=null)&&(bindList.size()>0)){
+                redisUtil.add(sessionKey,100L,user);
+                return new CusResult("success","登录成功,sessionKey:"+sessionKey);
             }else{
                 //首次绑定
                 if(user.getName()!=null){
@@ -86,8 +92,8 @@ public class UserController extends BaseController {
                         if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
                             //插入绑定
                             if(wechatService.insert(new WechatUser(openId,usr.getId()))==1){
-                                request.getSession().setAttribute("user",usr);
-                                return new CusResult("success","登录成功！");
+                                redisUtil.add(sessionKey,100L,user);
+                                return new CusResult("success","登录成功,sessionKey:"+sessionKey);
                             }else{
                                 return new CusResult("error","预约系统错误！");
                             }
@@ -104,9 +110,9 @@ public class UserController extends BaseController {
     @ApiOperation(value="用户注销", notes="用户注销")
     @GetMapping("/logout")
     public CusResult logout(HttpServletRequest request){
-        if(!checkLogin(request)){
-            return new CusResult("error","您尚未登录！");
-        }
+//        if(!checkLogin(request)){
+//            return new CusResult("error","您尚未登录！");
+//        }
         request.getSession().removeAttribute("user");
         return new CusResult("success","注销成功！");
     }
@@ -117,9 +123,9 @@ public class UserController extends BaseController {
     })
     @PostMapping("/modifyPD")
     public CusResult modifyPassword(HttpServletRequest request,String newPasswd){
-        if(!checkLogin(request)){
-            return new CusResult("error","您尚未登录！");
-        }
+//        if(!checkLogin(request)){
+//            return new CusResult("error","您尚未登录！");
+//        }
         MrUser user=(MrUser)request.getSession().getAttribute("user");
         user.setPassword(newPasswd);
         EncryptUtil.encrypt(user);

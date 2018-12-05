@@ -98,9 +98,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.meeting.meetresv.pojo.WechatUser">
-    insert into wechat_user (id, wechat_id, user_id
+    insert into wechat_user (wechat_id, user_id
       )
-    values (#{id,jdbcType=INTEGER}, #{wechatId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}
+    values (#{wechatId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.meeting.meetresv.pojo.WechatUser">
