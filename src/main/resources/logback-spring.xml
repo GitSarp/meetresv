@@ -7,7 +7,9 @@
     </springProfile>
     <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
     <springProfile name="prod">
-        <property name="log.path" value="/usr/local/tomcat/logs" />
+        <!--<property name="log.path" value="/usr/local/tomcat/logs" />-->
+        <!--这个地方为什么变成文件了？-->
+        <property name="log.path" value="/var/log/meetresv" />
     </springProfile>
     <!--<property name="log.path" value="E:\\test\\logback.log" />-->
 

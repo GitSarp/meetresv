@@ -16,7 +16,7 @@
     <!--主要样式控制-->
     <link href="/admin/main.css" rel="stylesheet">
 
-    <title>bootstrap后台模板设计</title>
+    <title>会议室预约管理系统</title>
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="/admin/ie10-viewport-bug-workaround.css" rel="stylesheet">
