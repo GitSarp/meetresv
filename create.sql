@@ -9,8 +9,8 @@ CREATE TABLE `MeetResv`.`mr_user`  (
   `department` varchar(255) NULL,
   `phone` varchar(255) NULL,
   `role` tinyint(1) NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE (name)
+  PRIMARY KEY (`id`)
+--   UNIQUE (name)
 );
 
 CREATE TABLE `MeetResv`.`mr_meetingroom` (

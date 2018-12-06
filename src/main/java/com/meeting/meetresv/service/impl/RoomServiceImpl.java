@@ -19,7 +19,7 @@ public class RoomServiceImpl implements RoomService {
     public List<MrMeetingroom> getAllRoom(String roomNo){
         MrMeetingroomExample example=new MrMeetingroomExample();
         if(!StringUtil.isEmpty(roomNo)){
-            example.createCriteria().andRoomNoEqualTo(roomNo);
+            example.createCriteria().andRoomNoLike("%"+roomNo+"%");
         }
         return mrMeetingroomMapper.selectByExample(example);
     }

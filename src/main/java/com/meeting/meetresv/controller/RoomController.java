@@ -13,6 +13,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Api(value = "RoomController",description = "会议室相关api")
@@ -33,7 +34,10 @@ public class RoomController extends BaseController {
 
     @ApiOperation(value="新增会议室", notes="增加会议室")
     @PostMapping("/add")
-    CusResult addRoom(MrMeetingroom room){
+    CusResult addRoom(HttpServletRequest request,MrMeetingroom room){
+        if(!checkAdminLogin(request)){
+            return new CusResult("error","请先登录！");
+        }
         try{
             return new CusResult(doResult(roomService.addRoom(room)),"");
         }catch (DuplicateKeyException e){
@@ -44,13 +48,19 @@ public class RoomController extends BaseController {
 
     @ApiOperation(value="更新会议室", notes="更新会议室")
     @PostMapping("/update")
-    CusResult updateRoom(MrMeetingroom room){
+    CusResult updateRoom(HttpServletRequest request,MrMeetingroom room){
+        if(!checkAdminLogin(request)){
+            return new CusResult("error","请先登录！");
+        }
         return new CusResult(doResult(roomService.updateRoom(room)),"");
     }
 
     @ApiOperation(value="删除会议室", notes="删除会议室")
     @DeleteMapping("/del")
-    CusResult deleteRoom(Integer id){
+    CusResult deleteRoom(HttpServletRequest request,Integer id){
+        if(!checkAdminLogin(request)){
+            return new CusResult("error","请先登录！");
+        }
         return new CusResult(doResult(roomService.delRoom(id)),"");
     }
 

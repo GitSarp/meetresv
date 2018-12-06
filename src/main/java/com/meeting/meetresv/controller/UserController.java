@@ -74,14 +74,22 @@ public class UserController extends BaseController {
         String openId=(String)result.get("openid");
         String sessionKey=(String)result.get("session_key");
 
+        logger.info("小程序接口返回:\n errcode:"+errorCode+";errmsg"+errorMsg+"openId:"+openId+";sessionKey"+sessionKey);
+
         if((errorCode!=null)&&(errorCode!=0)){
             return new CusResult("error","小程序登录失败,错误信息："+errorCode+";"+errorMsg);
         }else{
             //登录成功
             List<WechatUser> bindList=wechatService.validate(openId);
             if((bindList!=null)&&(bindList.size()>0)){
-                redisUtil.add(sessionKey,100L,user);
-                return new CusResult("success","登录成功,sessionKey:"+sessionKey);
+                MrUserExample userExample=new MrUserExample();
+                userExample.createCriteria().andIdEqualTo(bindList.get(0).getUserId());
+                List<MrUser> users=select(userExample);
+                if(users.size()<=0){
+                    return new CusResult("error","无此用户，请联系管理员！");
+                }
+                redisUtil.add(sessionKey,30L,users.get(0));
+                return new CusResult("success","登录成功!",sessionKey);
             }else{
                 //首次绑定
                 if(user.getName()!=null){
@@ -92,8 +100,8 @@ public class UserController extends BaseController {
                         if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
                             //插入绑定
                             if(wechatService.insert(new WechatUser(openId,usr.getId()))==1){
-                                redisUtil.add(sessionKey,100L,user);
-                                return new CusResult("success","登录成功,sessionKey:"+sessionKey);
+                                redisUtil.add(sessionKey,30L,user);
+                                return new CusResult("success","登录成功!",sessionKey);
                             }else{
                                 return new CusResult("error","预约系统错误！");
                             }
@@ -108,24 +116,34 @@ public class UserController extends BaseController {
     }
 
     @ApiOperation(value="用户注销", notes="用户注销")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String")
+    })
     @GetMapping("/logout")
-    public CusResult logout(HttpServletRequest request){
+    public CusResult logout(HttpServletRequest request,String skey){
 //        if(!checkLogin(request)){
 //            return new CusResult("error","您尚未登录！");
 //        }
+        if(checkLogin(request,skey)==null){
+            return new CusResult("error","您尚未登录！");
+        }
         request.getSession().removeAttribute("user");
         return new CusResult("success","注销成功！");
     }
 
     @ApiOperation(value="用户改密", notes="用户改密")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "newPasswd", value = "新密码", required = true, dataType = "String")
+            @ApiImplicitParam(name = "newPasswd", value = "新密码", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String")
     })
     @PostMapping("/modifyPD")
-    public CusResult modifyPassword(HttpServletRequest request,String newPasswd){
+    public CusResult modifyPassword(HttpServletRequest request,String newPasswd,String skey){
 //        if(!checkLogin(request)){
 //            return new CusResult("error","您尚未登录！");
 //        }
+        if(checkLogin(request,skey)==null){
+            return new CusResult("error","请先登录！");
+        }
         MrUser user=(MrUser)request.getSession().getAttribute("user");
         user.setPassword(newPasswd);
         EncryptUtil.encrypt(user);

@@ -37,6 +37,8 @@ public class AdminContoller extends BaseController {
     @Autowired
     WechatService wechatService;
 
+    private static final String[] administrators={"左梁佳","陶钰","章梦茜","郑璐","张翠"};
+
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
 //    private static final Logger logger= Logger.getLogger(UserController.class);
 
@@ -82,11 +84,6 @@ public class AdminContoller extends BaseController {
         return "login";
     }
 
-    @GetMapping("/modifyPD")
-    public String modify(){
-        return "modifyPD";
-    }
-
     @ApiOperation(value="用户改密", notes="用户改密")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "newPasswd", value = "新密码", required = true, dataType = "String")
@@ -113,7 +110,10 @@ public class AdminContoller extends BaseController {
         return "modifyPD";
     }
 
-
+    @GetMapping("/modifyPD")
+    public String modify(){
+        return "modifyPD";
+    }
     @GetMapping("/users")
     public String userManage(){
         return "userManage";
@@ -190,22 +190,48 @@ public class AdminContoller extends BaseController {
     }
 
     @PostMapping("/add")
-    @ResponseBody CusResult add(MrUser user, Model model){
+    @ResponseBody CusResult add(HttpServletRequest request,MrUser user, Model model){
+        if(!checkAdminLogin(request)){
+            return new CusResult("error","您尚未登录！");
+        }
+        //用户存在
+        MrUserExample example=new MrUserExample();
+        MrUserExample.Criteria criteria=example.createCriteria();
+        criteria.andNameEqualTo(user.getName());
+        criteria.andPasswordEqualTo(EncryptUtil.md5Password(user.getPassword()));
+        if(userService.selectByExample(example).size()>0){
+            return new CusResult("error","新增用户失败，用户已存在！");
+        }
+
         try{
             EncryptUtil.encrypt(user);
             return new CusResult(doResult(userService.insert(user)),"");
         }catch (DuplicateKeyException e){
             e.printStackTrace();
-            return new CusResult("error","用户名重复");
+            return new CusResult("error","新增用户异常，索引冲突");
         }
     }
 
     @DeleteMapping("/del")
-    @ResponseBody  CusResult delete(Integer id,Model model){
+    @ResponseBody  CusResult delete(HttpServletRequest request,Integer id,Model model){
+        if(!checkAdminLogin(request)){
+            return new CusResult("error","您尚未登录！");
+        }
+        //锁定基础管理员
+        MrUserExample example=new MrUserExample();
+        example.createCriteria().andIdEqualTo(id);
+        MrUser delUser=userService.selectByExample(example).get(0);
+        if(delUser.getRole()==true){
+            for (String tmpName:administrators) {
+                if(delUser.getName().equals(tmpName)){
+                    return new CusResult("error","禁止删除基础管理员！");
+                }
+            }
+        }
         int tmp1=userService.deleteByPrimaryKey(id);
         //删除微信关联
-        int tmp2=wechatService.deleteByUserId(id);
-        if((tmp1==1)&&(tmp2==1)){
+        wechatService.deleteByUserId(id);
+        if(tmp1==1){
             return new CusResult("success","删除用户成功");
         } else {
             return new CusResult("error","删除用户失败！");
@@ -214,7 +240,10 @@ public class AdminContoller extends BaseController {
 
 
     @PostMapping("/update")
-    @ResponseBody CusResult update(MrUser user,Model model){
+    @ResponseBody CusResult update(HttpServletRequest request,MrUser user,Model model){
+        if(!checkAdminLogin(request)){
+            return new CusResult("error","您尚未登录！");
+        }
         EncryptUtil.encrypt(user);
         return new CusResult(doResult(userService.updateByPrimaryKey(user)),"");
     }

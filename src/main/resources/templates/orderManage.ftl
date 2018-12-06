@@ -264,8 +264,22 @@
             $modal.data('id', row.id);//新增没有‘id’
             $modal.find('.modal-title').text(title);
             for (var name in row) {
-                $modal.find('input[name="' + name + '"]').val(row[name]);
+                var inputEl=$modal.find('input[name="' + name + '"]');
+                inputEl.val(row[name]);
+                //更新禁用编辑时间和会议室
+                // if($modal.data('id')){
+                //     if((name=="roomNo")||(name=="day")||(name=="period")){
+                //         inputEl.attr("disabled",true);
+                //     }
+                // }
             }
+            //新增变为可以编辑
+            // if($modal.data('id')==""){
+            //     $modal.find('input[name="roomNo"]').attr("disabled",false);
+            //     $modal.find('input[name="day"]').attr("disabled",false);
+            //     $modal.find('input[name="period"]').attr("disabled",false);
+            // }
+
             $modal.modal('show');
         }
 

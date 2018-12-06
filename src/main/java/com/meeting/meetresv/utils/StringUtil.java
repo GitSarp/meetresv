@@ -25,5 +25,22 @@ public class StringUtil extends StringUtils {
 		sb.append(s.substring(1, s.length()));
 		return sb.toString();
 	}
-    
+
+	/**
+	 * -拆分出两个字符串
+	 *
+	 * @param source
+	 * @return
+	 */
+	public static String[] divide(String source){
+		if(source.indexOf('-')<0){
+			return new String[]{};
+		}
+		String first=source.substring(0,source.indexOf('-'));
+		String next=source.substring(source.indexOf('-')+1);
+		String[] result=new String[]{
+				first,next
+		};
+		return result;
+ 	}
 }

@@ -132,6 +132,7 @@
                     showRefresh: true, //是否显示刷新按钮
                     clickToSelect: true, //是否启用点击选中行
                     paginationPreText: "<<",
+                    locale:'zh-CN',//中文支持,
                     paginationNextText: ">>"
                 }),
                 $modal = $('#modal').modal({show: false}),

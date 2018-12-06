@@ -28,7 +28,7 @@ public class ReadUserUtil {
 
     static {
         zhToEn.put("姓名","Name");
-        zhToEn.put("手机号码","Phone");
+        zhToEn.put("联系方式","Phone");
         zhToEn.put("部门","Department");
     }
 
@@ -81,8 +81,12 @@ public class ReadUserUtil {
             //获取第一个sheet
             Sheet sheet = workbook.getSheetAt(0);
 
-            for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            for (int rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
                 Row row = sheet.getRow(rowNum);
+//                //
+//                if(row==null){
+//                    continue;
+//                }
                 MrUser userModel=null;
                 if(rowNum!=0){
                     userModel=new MrUser();
@@ -97,7 +101,9 @@ public class ReadUserUtil {
                         map.put(colNum,zhToEn.get(content));
                         continue;
                     }
-                    ReflectUtil.invokeSetM(userModel,"set"+map.get(colNum),String.class,content);
+                    if(map.get(colNum)!=null){
+                        ReflectUtil.invokeSetM(userModel,"set"+map.get(colNum),String.class,content);
+                    }
                 }
                 if(rowNum!=0){
                     //姓名为空，跳过循环
@@ -130,5 +136,4 @@ public class ReadUserUtil {
             //IOUtils.closeQuietly(workbook);
         }
     }
-
 }

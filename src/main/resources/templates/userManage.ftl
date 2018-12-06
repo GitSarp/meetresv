@@ -253,7 +253,7 @@
                             if(data.result=="success"){
                                 showAlert('删除用户成功!', 'success');
                             }else {
-                                showAlert('删除用户失败!', 'danger');
+                                showAlert('删除用户失败!'+data.desc, 'danger');
                             }
                         },
                         error: function () {

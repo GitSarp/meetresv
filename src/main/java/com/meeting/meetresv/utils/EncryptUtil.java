@@ -46,6 +46,6 @@ public class EncryptUtil {
     }
 
 //    public static void main(String[] args) {
-//        System.out.println(md5Password("t1234"));
+//        System.out.println(md5Password("152681"));
 //    }
 }

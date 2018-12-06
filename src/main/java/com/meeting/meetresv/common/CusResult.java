@@ -12,10 +12,17 @@ public class CusResult {
     //desc改成message
     private String desc;
 
+    private String data;
+
     public CusResult() {
     }
 
     public CusResult(String result, String desc) {
+        this(result,desc,"");
+    }
+
+    public CusResult(String result, String desc,String data) {
+        this.data=data;
         this.result = result;
         this.desc = desc;
     }

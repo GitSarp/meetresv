@@ -11,15 +11,16 @@ public class BaseController {
     @Autowired
     RedisUtil redisUtil;
 
-    Boolean checkLogin(HttpServletRequest request, String skey) {
+    Object checkLogin(HttpServletRequest request, String skey) {
         //一些公共接口admin也会调用
         if (StringUtil.isEmpty(skey)) {
-            return checkAdminLogin(request);
+            return request.getSession().getAttribute("admin");
         } else {
-            if (redisUtil.get(skey) == null) {
-                return false;
-            }
-            return true;
+            return redisUtil.get(skey);
+//            if (redisUtil.get(skey) == null) {
+//                return false;
+//            }
+//            return true;
         }
     }
 
