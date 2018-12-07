@@ -19,6 +19,9 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
+            <h2 align="center">阿拉丁会议室预约管理系统</h2>
+            <br><br><br><br><br>
+
             <div class="panel panel-login">
                 <div class="panel-heading">
                     <div class="row">

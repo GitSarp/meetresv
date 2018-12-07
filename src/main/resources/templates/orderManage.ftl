@@ -92,24 +92,24 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <span class="input-group-addon">会议室编号</span>
-                        <input class="form-control" type="text" name="roomNo" id="roomNo">
+                        <span class="input-group-addon">会议室编号<span style="color:red">*</span></span>
+                        <input class="form-control" type="text" name="roomNo" id="roomNo" mustwrite="true">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">预约人</span>
-                        <input class="form-control" type="text" name="user" id="user">
+                        <span class="input-group-addon">预约人<span style="color:red">*</span></span>
+                        <input class="form-control" type="text" name="user" id="user" mustwrite="true">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">工作日</span>
-                        <input class="form-control" type="text" name="day" id="day">
+                        <span class="input-group-addon">工作日<span style="color:red">*</span></span>
+                        <input class="form-control" type="text" name="day" id="day" mustwrite="true">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">占用时段</span>
-                        <input class="form-control" type="text" name="period" id="period">
+                        <span class="input-group-addon">占用时段<span style="color:red">*</span></span>
+                        <input class="form-control" type="text" name="period" id="period" mustwrite="true">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon">用途</span>
-                        <input class="form-control" type="text" name="purpose" id="purpose">
+                        <span class="input-group-addon">用途<span style="color:red">*</span></span>
+                        <input class="form-control" type="text" name="purpose" id="purpose" mustwrite="true">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -141,6 +141,10 @@
 
             //提交
             $modal.find('.submit').click(function () {
+                if(!check()){
+                    alert("请填写所有必填项！");
+                    return;
+                }
                 var row = {};
                 $modal.find('input[name]').each(function () {
                     row[$(this).attr('name')] = $(this).val();
@@ -176,6 +180,19 @@
                 $(this).removeData("bs.modal");
             });
         });
+
+        //批量校验input必填项
+        function check() {
+            var item=$modal.find('input[mustwrite="true"]');
+            // var item = $("input[mustwrite='true']", document.forms[0]);
+            for (var i = 0; i < item.length; i++) {
+                if ($.trim(item[i].value) == "") {
+                    item[i].focus();    //光标定位到未填input框中
+                    return false;
+                }
+            }
+            return true;
+        }
 
         //得到查询的参数
         function queryParams(params) {

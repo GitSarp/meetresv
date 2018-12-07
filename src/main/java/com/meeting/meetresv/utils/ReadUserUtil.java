@@ -83,10 +83,10 @@ public class ReadUserUtil {
 
             for (int rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
                 Row row = sheet.getRow(rowNum);
-//                //
-//                if(row==null){
-//                    continue;
-//                }
+                //防止多余的空行
+                if(row==null){
+                    continue;
+                }
                 MrUser userModel=null;
                 if(rowNum!=0){
                     userModel=new MrUser();
@@ -94,6 +94,10 @@ public class ReadUserUtil {
                 for (int colNum = 0; colNum < row.getLastCellNum(); colNum++) {
                     //单元格内容
                     Cell cell=row.getCell(colNum);
+                    //防止空指针异常
+                    if(cell==null){
+                        continue;
+                    }
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     String content=getCellStringVal(cell).trim();
                     //第一行表头添加映射
@@ -110,15 +114,19 @@ public class ReadUserUtil {
                     if(StringUtil.isEmpty(userModel.getName())){
                         continue;
                     }
+                    if(StringUtil.isEmpty(userModel.getPhone())){
+                        userModel.setPassword("123456");//默认密码
+                    }else{
+                        userModel.setPassword(userModel.getPhone());//密码初始化为手机号
+                    }
                     //用户存在则跳过
                     MrUserExample example=new MrUserExample();
                     MrUserExample.Criteria criteria=example.createCriteria();
                     criteria.andNameEqualTo(userModel.getName());
-                    criteria.andPasswordEqualTo(EncryptUtil.md5Password(userModel.getPhone()));
+                    criteria.andPasswordEqualTo(EncryptUtil.md5Password(userModel.getPassword()));
                     if(userService.selectByExample(example).size()>0){
                         continue;
                     }
-                    userModel.setPassword(userModel.getPhone());//密码初始化为手机号或固定值
                     userModel.setRole(false);//只支持导入普通用户
                     EncryptUtil.encrypt(userModel);
                     try{

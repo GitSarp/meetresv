@@ -44,9 +44,6 @@ public class OrderController extends BaseController{
         if(user==null){
             return new CusResult("error","请先登录！");
         }
-        if(StringUtil.isEmpty(order.getPurpose())){
-            return new CusResult("error","请填写预约用途！");
-        }
         if(StringUtil.isEmpty(order.getDay())){
             order.setDay(DateUtil.getWeek(new Date()));
         }

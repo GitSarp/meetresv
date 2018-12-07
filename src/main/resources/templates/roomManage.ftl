@@ -91,8 +91,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <span class="input-group-addon">编号</span>
-                        <input class="form-control" type="text" name="roomNo" id="roomNo">
+                        <span class="input-group-addon">编号<span style="color:red">*</span></span>
+                        <input class="form-control" type="text" name="roomNo" id="roomNo" mustwrite="true">
                     </div>
                     <div class="input-group">
                         <span class="input-group-addon">其他信息</span>
@@ -151,10 +151,15 @@
             });
 
             $modal.find('.submit').click(function () {
+                if(!check()){
+                    alert("请填写所有必填项！");
+                    return;
+                }
                 var row = {};
                 $modal.find('input[name]').each(function () {
                     row[$(this).attr('name')] = $(this).val();
                 });
+
                 var url="/add";
                 if($modal.data('id')){
                     url="/update";
@@ -180,6 +185,19 @@
                 });
             });
         });
+
+        //批量校验input必填项
+        function check() {
+            var item=$modal.find('input[mustwrite="true"]');
+            // var item = $("input[mustwrite='true']", document.forms[0]);
+            for (var i = 0; i < item.length; i++) {
+                if ($.trim(item[i].value) == "") {
+                    item[i].focus();    //光标定位到未填input框中
+                    return false;
+                }
+            }
+            return true;
+        }
 
         function queryParams(params) {
             var roomNo = { //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的

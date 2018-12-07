@@ -12,7 +12,9 @@ public class EncryptUtil {
      * @return
      */
     public static String md5Password(String password) {
-
+        if(StringUtil.isEmpty(password)){
+            return password;
+        }
         try {
             // 得到一个信息摘要器
             MessageDigest digest = MessageDigest.getInstance("md5");

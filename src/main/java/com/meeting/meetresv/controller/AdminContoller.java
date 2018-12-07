@@ -37,10 +37,7 @@ public class AdminContoller extends BaseController {
     @Autowired
     WechatService wechatService;
 
-    private static final String[] administrators={"左梁佳","陶钰","章梦茜","郑璐","张翠"};
-
     private static Logger logger = LoggerFactory.getLogger(UserController.class);
-//    private static final Logger logger= Logger.getLogger(UserController.class);
 
     @GetMapping("/login")
     public String adminLogin(){
@@ -216,17 +213,6 @@ public class AdminContoller extends BaseController {
     @ResponseBody  CusResult delete(HttpServletRequest request,Integer id,Model model){
         if(!checkAdminLogin(request)){
             return new CusResult("error","您尚未登录！");
-        }
-        //锁定基础管理员
-        MrUserExample example=new MrUserExample();
-        example.createCriteria().andIdEqualTo(id);
-        MrUser delUser=userService.selectByExample(example).get(0);
-        if(delUser.getRole()==true){
-            for (String tmpName:administrators) {
-                if(delUser.getName().equals(tmpName)){
-                    return new CusResult("error","禁止删除基础管理员！");
-                }
-            }
         }
         int tmp1=userService.deleteByPrimaryKey(id);
         //删除微信关联
