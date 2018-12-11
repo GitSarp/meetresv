@@ -191,6 +191,8 @@
                 }
                 var url="/add";
                 if($modal.data('id')){
+                    //密码置空,不变
+                    row["password"]=null;
                     url="/update";
                     row["id"]=$modal.data('id');
                 }
@@ -292,6 +294,7 @@
             $modal.data('id', row.id);//新增没有‘id’
             $modal.find('.modal-title').text(title);
 
+            $modal.find('input[name=password]').attr("readOnly",false);
             //更新时控件传值，显示role为0/1
             if(title=="更新"){
                 for (var name in row) {
@@ -302,6 +305,8 @@
                 }else{
                     $modal.find('input[name=role]').val(0);
                 }
+                //禁用更新password
+                $modal.find('input[name=password]').attr("readOnly",true);
             }
             $modal.modal('show');
         }

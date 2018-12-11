@@ -60,6 +60,7 @@ public class AdminContoller extends BaseController {
         List<MrUser> users=select(userExample);
         for(MrUser usr:users){
             if(EncryptUtil.md5Password(user.getPassword()).equals(usr.getPassword())){
+                request.getSession().setMaxInactiveInterval(1800);//设置超时时间30min
                 request.getSession().setAttribute("admin",usr);
                 model.addAttribute("msg","登录成功！");
                 return "index";

@@ -12,11 +12,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,8 @@ public class OrderController extends BaseController{
     @Autowired
     OrderService orderService;
 
+    private static Logger logger = LoggerFactory.getLogger(OrderController.class);
+
     @ApiOperation(value="预约会议室", notes="增加预约信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roomNo", value = "会议室编号", required = true, dataType = "String"),
@@ -42,11 +47,17 @@ public class OrderController extends BaseController{
     public CusResult orderRoom(HttpServletRequest request,MrOrder order,String skey){
         MrUser user=(MrUser) checkLogin(request,skey);
         if(user==null){
+            logger.info("error:"+"请先登录!");
             return new CusResult("error","请先登录！");
         }
+
         if(StringUtil.isEmpty(order.getDay())){
-            order.setDay(DateUtil.getWeek(new Date()));
+            order.setDay(new SimpleDateFormat("MM月dd日").format(new Date()));
+        }else{
+            //WTF
+            order.setDay(DateUtil.inDayStr(order.getDay()));
         }
+
         if(order.getUser()==null){
             order.setUser(user.getName());
         }
@@ -61,9 +72,11 @@ public class OrderController extends BaseController{
                 if((needCheckTime[1].compareTo(duration[0])<=0)||(needCheckTime[0].compareTo(duration[1])>=0)){
                     continue;
                 }else{
+                    logger.info("error:"+"预约时间冲突，请刷新后重试!");
                     return new CusResult("error","预约时间冲突，请刷新后重试");
                 }
             }
+            logger.info("info:"+"开始预约，请查看表数据");
             return new CusResult(doResult(orderService.orderRoom(order)),"");
         }
     }
@@ -86,7 +99,12 @@ public class OrderController extends BaseController{
         if(order.getLimit()!=0){
             result.put("page",order.getOffset()/order.getLimit()+1);
         }
-        result.put("rows",orderService.query(order));
+        //WTF
+        List<MrOrder> list=orderService.query(order);
+        for (MrOrder tmpOrder:list) {
+            tmpOrder.setDay(DateUtil.outDayStr(tmpOrder.getDay()));
+        }
+        result.put("rows",list);
         result.put("total",orderService.count(order));
         order.setOffset((order.getOffset()-1)*order.getLimit());
         return result;
@@ -131,6 +149,8 @@ public class OrderController extends BaseController{
                     return new CusResult("error","预约时间冲突，请刷新确认后重试");
                 }
             }
+            //WTF
+            order.setDay(DateUtil.inDayStr(order.getDay()));
             return new CusResult(doResult(orderService.updateOrder(order)),"");
         }
     }

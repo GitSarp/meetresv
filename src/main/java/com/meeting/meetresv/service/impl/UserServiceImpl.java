@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateByPrimaryKey(MrUser record) {
-        return mrUserMapper.updateByPrimaryKey(record);
+        return mrUserMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override

@@ -117,38 +117,32 @@ public class UserController extends BaseController {
 
     @ApiOperation(value="用户注销", notes="用户注销")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String")
+            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String",required = true)
     })
     @GetMapping("/logout")
     public CusResult logout(HttpServletRequest request,String skey){
-//        if(!checkLogin(request)){
-//            return new CusResult("error","您尚未登录！");
-//        }
         if(checkLogin(request,skey)==null){
             return new CusResult("error","您尚未登录！");
         }
-        request.getSession().removeAttribute("user");
+        redisUtil.delete(skey);
         return new CusResult("success","注销成功！");
     }
 
     @ApiOperation(value="用户改密", notes="用户改密")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "newPasswd", value = "新密码", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String")
+            @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String",required = true)
     })
     @PostMapping("/modifyPD")
     public CusResult modifyPassword(HttpServletRequest request,String newPasswd,String skey){
-//        if(!checkLogin(request)){
-//            return new CusResult("error","您尚未登录！");
-//        }
         if(checkLogin(request,skey)==null){
             return new CusResult("error","请先登录！");
         }
-        MrUser user=(MrUser)request.getSession().getAttribute("user");
+        MrUser user=redisUtil.get(skey);
         user.setPassword(newPasswd);
         EncryptUtil.encrypt(user);
         if(userService.updateByPrimaryKey(user)==1){
-            request.getSession().setAttribute("user",user);
+            redisUtil.add(skey,30L,user);
             return new CusResult("success","您的密码修改成功！");
         }
         return new CusResult("error","密码修改失败");
