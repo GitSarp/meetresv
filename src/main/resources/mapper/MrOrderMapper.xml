@@ -229,7 +229,7 @@
   <select id="selectPrimitive" parameterType="com.meeting.meetresv.pojo.page.OrderPage" resultMap="BaseResultMap">
     select * from mr_order
     <include refid="searchBy" />
-    order by day desc
+    order by day desc,period asc
     <if test="limit !=null and limit !=0">
       limit #{offset,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
     </if>
