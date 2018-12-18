@@ -57,15 +57,18 @@ public class OrderController extends BaseController{
             //WTF
             order.setDay(DateUtil.inDayStr(order.getDay()));
         }
-
-        if(order.getUser()==null){
-            order.setUser(user.getName());
+        //保存用户名
+        String username="";
+        if(order.getUser()!=null){
+            username=order.getUser();
         }
         //并发控制
         //待校验时间
         String[] needCheckTime=StringUtil.divide(order.getPeriod());
+        int result=0;
         synchronized (this){
             //获取已预约信息,校验预约时间冲突
+            order.setUser("");//去除用户查询条件
             List<MrOrder> orders=orderService.query(new OrderPage(order));
             for (MrOrder tmp:orders) {
                 String[] duration=StringUtil.divide(tmp.getPeriod());
@@ -76,9 +79,21 @@ public class OrderController extends BaseController{
                     return new CusResult("error","预约时间冲突，请刷新后重试");
                 }
             }
+
             logger.info("info:"+"开始预约，请查看表数据");
-            return new CusResult(doResult(orderService.orderRoom(order)),"");
+            //获取用户名
+            if(username.equals("")){
+                order.setUser(user.getName());
+            }else{
+                order.setUser(username);
+            }
+            try {
+                result=orderService.orderRoom(order);
+            }catch (Exception e){
+                return new CusResult("error","失败，请刷新数据后重试");
+            }
         }
+        return new CusResult(doResult(result),"");
     }
 
     @ApiOperation(value="预约查询", notes="查询预约信息")
