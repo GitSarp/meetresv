@@ -2,35 +2,37 @@ CREATE DATABASE `MeetResv` CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 use MeetResv;
 
 
-CREATE TABLE `MeetResv`.`mr_user`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NULL,
-  `password` varchar(255) NULL,
-  `department` varchar(255) NULL,
-  `phone` varchar(255) NULL,
-  `role` tinyint(1) NULL,
+CREATE TABLE `mr_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `department` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `phone` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `role` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
---   UNIQUE (name)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TABLE `MeetResv`.`mr_meetingroom` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `room_no` VARCHAR(45) NOT NULL,
-  `mr_ext` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`));
-
-CREATE TABLE `MeetResv`.`mr_order` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `room_no` VARCHAR(45) NOT NULL,
-  `user` VARCHAR(45) NOT NULL,
-  `day` varchar(10) NOT NULL,
-  `period` VARCHAR(255) NOT NULL,
-  `purpose` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`));
-
-CREATE TABLE `MeetResv`.`wechat_user`  (
-  `id` int(0) NOT NULL AUTO_INCREMENT,
-  `wechat_id` varchar(50) NOT NULL,
-  `user_id` int(0) NOT NULL,
+CREATE TABLE `mr_meetingroom` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_no` varchar(45) COLLATE utf8_bin NOT NULL,
+  `mr_ext` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE `mr_order` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `room_no` varchar(45) COLLATE utf8_bin NOT NULL,
+  `user` varchar(45) COLLATE utf8_bin NOT NULL,
+  `day` varchar(10) COLLATE utf8_bin NOT NULL,
+  `period` varchar(255) COLLATE utf8_bin NOT NULL,
+  `purpose` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_time` (`room_no`,`day`,`period`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE `wechat_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `wechat_id` varchar(50) COLLATE utf8_bin NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
