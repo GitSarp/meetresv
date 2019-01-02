@@ -115,6 +115,9 @@ public class OrderController extends BaseController{
             result.put("page",order.getOffset()/order.getLimit()+1);
         }
         //WTF
+        if(!StringUtil.isEmpty(order.getDay())){
+            order.setDay(DateUtil.inDayStr(order.getDay()));
+        }
         List<MrOrder> list=orderService.query(order);
         for (MrOrder tmpOrder:list) {
             tmpOrder.setDay(DateUtil.outDayStr(tmpOrder.getDay()));
