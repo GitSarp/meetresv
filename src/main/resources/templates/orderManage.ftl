@@ -262,7 +262,10 @@
                             $table.bootstrapTable('refresh');
                             if(data.result=="success"){
                                 showAlert('删除预约成功!', 'success');
-                            }else {
+                            }else if(data.desc=="请先登录！"){
+                                showAlert('请先登录!', 'danger');
+                            }
+                            else {
                                 showAlert('删除预约失败!', 'danger');
                             }
                         },
