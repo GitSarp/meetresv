@@ -1,6 +1,7 @@
 package com.meeting.meetresv.pojo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MrOrderExample {
@@ -314,7 +315,7 @@ public class MrOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andDayEqualTo(String value) {
+        public Criteria andDayEqualTo(Date value) {
             addCriterion("day =", value, "day");
             return (Criteria) this;
         }

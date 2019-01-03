@@ -1,5 +1,9 @@
 package com.meeting.meetresv.pojo;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+
 public class MrOrder {
     private Integer id;
 
@@ -7,7 +11,7 @@ public class MrOrder {
 
     private String user;
 
-    private String day;
+    private Date day;
 
     private String period;
 
@@ -37,12 +41,14 @@ public class MrOrder {
         this.user = user == null ? null : user.trim();
     }
 
-    public String getDay() {
+    //使用此参数将string转换为date
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    public Date getDay() {
         return day;
     }
 
-    public void setDay(String day) {
-        this.day = day == null ? null : day.trim();
+    public void setDay(Date day) {
+        this.day=day;
     }
 
     public String getPeriod() {

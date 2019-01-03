@@ -4,6 +4,8 @@ import com.meeting.meetresv.pojo.MrOrder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 public class OrderPage extends MrOrder {
@@ -13,7 +15,7 @@ public class OrderPage extends MrOrder {
     public OrderPage(){
 
     }
-    public OrderPage(String roomNo,String user,String day){
+    public OrderPage(String roomNo, String user, Date day){
         this.setRoomNo(roomNo);
         this.setUser(user);
         this.setDay(day);

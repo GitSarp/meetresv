@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="room_no" jdbcType="VARCHAR" property="roomNo" />
     <result column="user" jdbcType="VARCHAR" property="user" />
-    <result column="day" jdbcType="VARCHAR" property="day" />
+    <result column="day" jdbcType="DATE" property="day" />
     <result column="period" jdbcType="VARCHAR" property="period" />
     <result column="purpose" jdbcType="VARCHAR" property="purpose" />
   </resultMap>
@@ -105,7 +105,7 @@
       day, period, purpose
       )
     values (#{roomNo,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR},
-      #{day,jdbcType=VARCHAR}, #{period,jdbcType=VARCHAR}, #{purpose,jdbcType=VARCHAR}
+      #{day,jdbcType=DATE}, #{period,jdbcType=VARCHAR}, #{purpose,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.meeting.meetresv.pojo.MrOrder">
@@ -141,7 +141,7 @@
         #{user,jdbcType=VARCHAR},
       </if>
       <if test="day != null">
-        #{day,jdbcType=VARCHAR},
+        #{day,jdbcType=DATE},
       </if>
       <if test="period != null">
         #{period,jdbcType=VARCHAR},
@@ -170,7 +170,7 @@
         user = #{record.user,jdbcType=VARCHAR},
       </if>
       <if test="record.day != null">
-        day = #{record.day,jdbcType=VARCHAR},
+        day = #{record.day,jdbcType=DATE},
       </if>
       <if test="record.period != null">
         period = #{record.period,jdbcType=VARCHAR},
@@ -188,7 +188,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       room_no = #{record.roomNo,jdbcType=VARCHAR},
       user = #{record.user,jdbcType=VARCHAR},
-      day = #{record.day,jdbcType=VARCHAR},
+      day = #{record.day,jdbcType=DATE},
       period = #{record.period,jdbcType=VARCHAR},
       purpose = #{record.purpose,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -205,7 +205,7 @@
         user = #{user,jdbcType=VARCHAR},
       </if>
       <if test="day != null">
-        day = #{day,jdbcType=VARCHAR},
+        day = #{day,jdbcType=DATE},
       </if>
       <if test="period != null">
         period = #{period,jdbcType=VARCHAR},
@@ -220,7 +220,7 @@
     update mr_order
     set room_no = #{roomNo,jdbcType=VARCHAR},
       user = #{user,jdbcType=VARCHAR},
-      day = #{day,jdbcType=VARCHAR},
+      day = #{day,jdbcType=DATE},
       period = #{period,jdbcType=VARCHAR},
       purpose = #{purpose,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
@@ -244,8 +244,8 @@
       <if test="roomNo !=null and roomNo !=''">
         and room_no = #{roomNo,jdbcType=VARCHAR}
       </if>
-      <if test="day !=null and day !=''">
-        and day = #{day,jdbcType=VARCHAR}
+      <if test="day != null">
+        and day = #{day,jdbcType=DATE}
       </if>
       <!--<if test="purpose !=null and purpose !=''">-->
         <!--and purpose = #{purpose,jdbcType=VARCHAR}-->

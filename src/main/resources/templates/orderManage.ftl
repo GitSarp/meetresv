@@ -68,7 +68,7 @@
                 <th data-field="id">预约id</th>
                 <th data-field="roomNo">会议室编号</th>
                 <th data-field="user">预约人</th>
-                <th data-field="day">工作日</th>
+                <th data-field="day" data-formatter="dateFormatter">工作日</th>
                 <th data-field="period">占用时段</th>
                 <th data-field="purpose">用途</th>
                 <th data-field="action"
@@ -248,6 +248,21 @@
             ].join('');
         }
 
+        //格式化日期
+        function dateFormatter(value) {
+            var formattedDate = new Date(value);
+            var d = formattedDate.getDate();
+            if(d<10){
+                d="0"+d;
+            }
+            var m =  formattedDate.getMonth()+1;
+            if(m<10){
+                m="0"+m;
+            }
+            var y = formattedDate.getFullYear();
+            return y + "-" + m + "-" + d;
+        }
+
         // update and delete events
         window.actionEvents = {
             'click .update': function (e, value, row) {
@@ -285,7 +300,12 @@
             $modal.find('.modal-title').text(title);
             for (var name in row) {
                 var inputEl=$modal.find('input[name="' + name + '"]');
-                inputEl.val(row[name]);
+                //日期单独处理
+                if(name=="day"){
+                    inputEl.val(dateFormatter(row[name]));
+                }else{
+                    inputEl.val(row[name]);
+                }
                 //更新禁用编辑时间和会议室
                 // if($modal.data('id')){
                 //     if((name=="roomNo")||(name=="day")||(name=="period")){

@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
         if(!StringUtil.isEmpty(order.getUser())){
             criteria= criteria.andUserEqualTo(order.getUser());
         }
-        if(!StringUtil.isEmpty(order.getDay())){
+        if(order.getDay() != null){
             criteria= criteria.andDayEqualTo(order.getDay());
         }
         return mrOrderMapper.countByExample(example);

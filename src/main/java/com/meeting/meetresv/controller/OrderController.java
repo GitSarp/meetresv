@@ -51,11 +51,8 @@ public class OrderController extends BaseController{
             return new CusResult("error","请先登录！");
         }
 
-        if(StringUtil.isEmpty(order.getDay())){
-            order.setDay(new SimpleDateFormat("MM月dd日").format(new Date()));
-        }else{
-            //WTF
-            order.setDay(DateUtil.inDayStr(order.getDay()));
+        if(order.getDay() == null){
+            order.setDay(new Date());
         }
         //保存用户名
         String username="";
@@ -106,7 +103,7 @@ public class OrderController extends BaseController{
             @ApiImplicitParam(name = "offset", value = "页码", dataType = "int"),
             @ApiImplicitParam(name = "skey", value = "sessionKey",  dataType = "String")})
     @RequestMapping(value = "/query",method = {RequestMethod.POST, RequestMethod.GET})
-    public Map<String,Object> pageQuery(OrderPage order,String skey){
+    public Map<String,Object> pageQuery(OrderPage order,String skey,HttpServletRequest request){
         if(!StringUtil.isEmpty(skey)){
             order.setUser(redisUtil.get(skey).getName());
         }
@@ -114,14 +111,7 @@ public class OrderController extends BaseController{
         if(order.getLimit()!=0){
             result.put("page",order.getOffset()/order.getLimit()+1);
         }
-        //WTF
-        if(!StringUtil.isEmpty(order.getDay())){
-            order.setDay(DateUtil.inDayStr(order.getDay()));
-        }
         List<MrOrder> list=orderService.query(order);
-        for (MrOrder tmpOrder:list) {
-            tmpOrder.setDay(DateUtil.outDayStr(tmpOrder.getDay()));
-        }
         result.put("rows",list);
         result.put("total",orderService.count(order));
         order.setOffset((order.getOffset()-1)*order.getLimit());
@@ -168,7 +158,7 @@ public class OrderController extends BaseController{
                 }
             }
             //WTF
-            order.setDay(DateUtil.inDayStr(order.getDay()));
+//            order.setDay(DateUtil.inDayStr(order.getDay()));
             return new CusResult(doResult(orderService.updateOrder(order)),"");
         }
     }
