@@ -146,10 +146,17 @@ public class OrderController extends BaseController{
         //并发控制
         //待校验时间
         String[] needCheckTime=StringUtil.divide(order.getPeriod());
+        //保存用户名
+        String username=order.getUser();
         synchronized (this){
+            order.setUser("");//去除用户查询条件
             //获取已预约信息,校验预约时间冲突
             List<MrOrder> orders=orderService.query(new OrderPage(order));
             for (MrOrder tmp:orders) {
+                //自我排除
+                if(tmp.getId().equals(order.getId())){
+                    continue;
+                }
                 String[] duration=StringUtil.divide(tmp.getPeriod());
                 if((needCheckTime[1].compareTo(duration[0])<=0)||(needCheckTime[0].compareTo(duration[1])>=0)){
                     continue;
@@ -157,8 +164,8 @@ public class OrderController extends BaseController{
                     return new CusResult("error","预约时间冲突，请刷新确认后重试");
                 }
             }
-            //WTF
-//            order.setDay(DateUtil.inDayStr(order.getDay()));
+            //获取用户名
+            order.setUser(username);
             return new CusResult(doResult(orderService.updateOrder(order)),"");
         }
     }
