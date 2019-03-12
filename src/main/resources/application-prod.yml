@@ -1,0 +1,46 @@
+#spring boot集成mybatis  https://blog.csdn.net/isea533/article/details/50359390
+spring:
+  application:
+    name: meetresv
+  datasource:
+    username: meetresv_user
+    password: meetresv_pass
+    url: jdbc:mysql://localhost:3306/meetresv?useUnicode:true&amp;characterEncoding:UTF-8
+    driverClassName: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    sql-script-encoding: UTF-8
+    filters: stat
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+  #freemarker
+  freemarker:
+    template-loader-path: classpath:/templates/
+    #设置禁用模板引擎缓存
+    cache: false
+    settings:
+      template_update_delay: 0
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: redis4321
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  #  实体类
+  type-aliases-package: com.meeting.meetresv.pojo
+
+server:
+  port: 8084
+  tomcat:
+    uri-encoding: UTF-8
+
+
+
