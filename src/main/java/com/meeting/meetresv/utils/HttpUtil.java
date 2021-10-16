@@ -45,8 +45,8 @@ public class HttpUtil {
 
 //    public static void main(String[] args) {
 //        String  login_url="https://api.weixin.qq.com/sns/jscode2session";
-//        String  appid="wx05ca89971b4a868b";
-//        String  secret="28bb8ff8894cffa7f26c07929fb9fade";
+//        String  appid="";
+//        String  secret="";
 //        String  grant_type="authorization_code";
 //        Map<String,String> params=new HashMap<>();
 //        params.put("appid",appid);
